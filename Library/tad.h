@@ -108,10 +108,13 @@ void inicTabela(Tabela **tabela){
 	(*tabela)->ant = (*tabela)->prox = NULL;
 }
 
-Tabela novoTabela(char *nome){
+Tabela *novoTabela(char *nome){
 	Tabela *caixa = (Tabela*) malloc(sizeof(Tabela));
 	strcpy(caixa->nome, nome);
 	caixa->prox = caixa->ant = NULL;
+	
+	return caixa;
 }
+
 
 
