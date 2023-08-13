@@ -19,7 +19,7 @@ void inicString(String **string) {
 }
 
 Caractere *novoCaractere(char carac) {
-	Caractere c = (Caractere *) malloc(sizeof(Caractere));
+	Caractere *c = (Caractere *) malloc(sizeof(Caractere));
 	c->ant = c->prox = NULL;
 	c->C = carac;
 }
