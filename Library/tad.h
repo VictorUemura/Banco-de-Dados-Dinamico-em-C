@@ -31,3 +31,48 @@ typedef struct BancoDado {
 	Tabela *tabela;
 } BancoDado;
 
+Dado *novoDadoInt(int num){
+	Dado *caixa = (Dado*) malloc(sizeof(Dado));;
+	caixa->valorI = num;
+	caixa->prox = NULL;
+	
+	return Dado;
+}
+
+void inicListaDado(Dado **dado){
+	(*dado)->prox = NULL;
+}
+
+Dado *novoDadoFloat(float num){
+	Dado *caixa = (Dado*) malloc(sizeof(Dado));
+	caixa->valorN = num;
+	caixa->prox = NULL;
+	
+	return caixa;
+}
+
+Dado *novoDadoIdade(char *id){
+	Dado *caixa = (Dado*) malloc(sizeof(Dado));
+	strcpy(Dado->valorD, id);
+	caixa->prox = NULL;
+	
+	return caixa;
+}
+
+Dado *novoDadoCaractere(char *c){
+	Dado *caixa = (Dado*) malloc(sizeof(Dado));
+	caixa->valorC = c;
+	caixa->prox = NULL;
+	
+	return caixa;
+}
+
+Dado *novoDadoString(char *string){
+	Dado *caixa = (Dado*) malloc(sizeof(Dado));
+	strcpy(caixa->valorT, string);
+	caixa->prox = NULL;
+	
+	return caixa;
+} 
+
+
