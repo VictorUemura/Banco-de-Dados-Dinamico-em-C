@@ -48,3 +48,13 @@ String *convertCharToString(char *caractere) {
 	return novaString;
 }
 
+char *convertStringToChar(String *string) {
+	char *caracteres = (char *) malloc(sizeof(char) * string->tam);
+	for(int i = 0; string->inicio != NULL; i++) {
+		caracteres[i] = string->inicio->C;
+		string->inicio = string->inicio->prox;
+	}
+	return caracteres;
+}
+
+
