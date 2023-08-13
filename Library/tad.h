@@ -40,7 +40,7 @@ Dado *novoDadoInt(int num){
 	caixa->valorI = num;
 	caixa->prox = NULL;
 	
-	return Dado;
+	return caixa;
 }
 
 Dado *novoDadoFloat(float num){
@@ -53,7 +53,7 @@ Dado *novoDadoFloat(float num){
 
 Dado *novoDadoIdade(char *id){
 	Dado *caixa = (Dado*) malloc(sizeof(Dado));
-	strcpy(Dado->valorD, id);
+	strcpy(caixa->valorD, id);
 	caixa->prox = NULL;
 	
 	return caixa;
@@ -87,9 +87,7 @@ void insereDado(Dado **lista, Dado *novoDado) {
 }
 
 void inicListaPColuna(PColuna **coluna){
-	(*coluna)->Dado->pDados = NULL;
-	(*coluna)->prox = NULL;
-	(*coluna)->fk = NULL;
+	*coluna = NULL;
 }
 
 PColuna *novoPColuna(char tipo, char *campo, char pk){
@@ -120,9 +118,9 @@ void inicBancoDados(BancoDado **banco){
 	(*banco)->tabela = NULL;
 }
 
-BancoDados *novoBancoDado(char *nome){
-	BancoDados *caixa = (BancoDado*) malloc(sizeof(BancoDados));
+BancoDado *novoBancoDado(char *nome){
+	BancoDado *caixa = (BancoDado*) malloc(sizeof(BancoDado));
 	caixa->tabela = NULL;
-	
+	strcpy(caixa->nome, nome);
 	return caixa;
 }
