@@ -3,7 +3,7 @@
 typedef struct Caractere {
 	struct Caractere *prox;
 	struct Caractere *ant;
-	char *C;
+	char C;
 } Caractere;
 
 typedef struct String {
