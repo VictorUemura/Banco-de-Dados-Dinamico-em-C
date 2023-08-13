@@ -31,16 +31,16 @@ typedef struct BancoDado {
 	Tabela *tabela;
 } BancoDado;
 
+void inicListaDado(Dado **dado){
+	(*dado)->prox = NULL;
+}
+
 Dado *novoDadoInt(int num){
 	Dado *caixa = (Dado*) malloc(sizeof(Dado));;
 	caixa->valorI = num;
 	caixa->prox = NULL;
 	
 	return Dado;
-}
-
-void inicListaDado(Dado **dado){
-	(*dado)->prox = NULL;
 }
 
 Dado *novoDadoFloat(float num){
@@ -85,3 +85,24 @@ void insereDado(Dado **lista, Dado *novoDado) {
 		inicioAux->prox = novoDado;
 	}
 }
+
+void inicListaPColuna(PColuna **coluna){
+	(*coluna)->Dado->pDados = NULL;
+	(*coluna)->prox = NULL;
+	(*coluna)->fk = NULL;
+}
+
+PColuna *novoPColuna(char tipo, char *campo, char pk){
+	PColuna *caixa = (PColuna*) malloc(sizeof(PColuna));
+	caixa->tipo = tipo;
+	strcpy(caixa->campo, campo);
+	caixa->pk = pk;
+	caixa->pDados = NULL;
+	caixa->fk = caixa->prox = NULL;
+	
+	return caixa;
+}
+
+
+
+
