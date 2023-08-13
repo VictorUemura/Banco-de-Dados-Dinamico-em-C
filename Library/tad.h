@@ -75,6 +75,7 @@ Dado *novoDadoString(char *string){
 	return caixa;
 } 
 
+// Insere dados no final da lista de dados
 void insereDado(Dado **lista, Dado *novoDado) {
 	Dado *inicioAux = *lista;
 	if(*lista == NULL)
@@ -124,3 +125,16 @@ BancoDado *novoBancoDado(char *nome){
 	strcpy(caixa->nome, nome);
 	return caixa;
 }
+
+void insereColuna(PColuna **listaColuna, char tipo, char *campo, char pk) {
+	PColuna *coluna = novaPColuna(tipo, campo, pk), *colunaAux = *listaColuna;
+	if(*listaColuna == NULL) {
+		*listaColuna = coluna;
+	}
+	else {
+		while(colunaAux->prox != NULL)
+			colunaAux = colunaAux->prox;
+		colunaAux->prox = coluna;
+	}
+}
+
