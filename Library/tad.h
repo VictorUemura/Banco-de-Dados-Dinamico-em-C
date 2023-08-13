@@ -116,5 +116,13 @@ Tabela *novoTabela(char *nome){
 	return caixa;
 }
 
+void inicBancoDados(BancoDado **banco){
+	(*banco)->tabela = NULL;
+}
 
-
+BancoDados *novoBancoDado(char *nome){
+	BancoDados *caixa = (BancoDado*) malloc(sizeof(BancoDados));
+	caixa->tabela = NULL;
+	
+	return caixa;
+}
