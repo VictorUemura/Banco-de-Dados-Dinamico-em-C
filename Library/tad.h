@@ -75,4 +75,13 @@ Dado *novoDadoString(char *string){
 	return caixa;
 } 
 
-
+void insereDado(Dado **lista, Dado *novoDado) {
+	Dado *inicioAux = *lista;
+	if(*lista == NULL)
+		*lista = novoDado;
+	else {
+		while(inicioAux->prox != NULL)
+			inicioAux = inicioAux->prox;
+		inicioAux->prox = novoDado;
+	}
+}
