@@ -13,9 +13,9 @@ typedef struct String {
 } String;
 
 void inicString(String **string) {
-	*string->inicio = NULL;
-	*string->fim = NULL;
-	*string->tam = 0;
+	(*string)->inicio = NULL;
+	(*string)->fim = NULL;
+	(*string)->tam = 0;
 }
 
 Caractere *novoCaractere(char carac) {
