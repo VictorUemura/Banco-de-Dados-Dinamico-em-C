@@ -14,5 +14,6 @@ int main(void) {
 	printf("\n%s", string2);
 	
 	
+	printf("%d", stricmp("Beee", "b"));
 	return 0;
 }
