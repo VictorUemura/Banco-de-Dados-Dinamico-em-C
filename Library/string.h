@@ -1,20 +1,26 @@
 
 // Implementação -> String dinâmica
-typedef struct Character {
-	struct Character *prox;
-	struct Character *ant;
+typedef struct Caractere {
+	struct Caractere *prox;
+	struct Caractere *ant;
 	char *C;
-} Character;
+} Caractere;
 
 typedef struct String {
 	int tam;
-	Character *inicio;
-	Character *fim;
+	Caractere *inicio;
+	Caractere *fim;
 } String;
 
-void inicString(String *string) {
-	string->inicio = NULL;
-	string->fim = NULL;
-	string->tam = 0;
+void inicString(String **string) {
+	*string->inicio = NULL;
+	*string->fim = NULL;
+	*string->tam = 0;
+}
+
+Caractere *novoCaractere(char carac) {
+	Caractere c = (Caractere *) malloc(sizeof(Caractere));
+	c->ant = c->prox = NULL;
+	c->C = carac;
 }
 
