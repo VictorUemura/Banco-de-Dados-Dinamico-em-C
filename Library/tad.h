@@ -103,6 +103,15 @@ PColuna *novoPColuna(char tipo, char *campo, char pk){
 	return caixa;
 }
 
+void inicTabela(Tabela **tabela){
+	(*tabela)->coluna = NULL;
+	(*tabela)->ant = (*tabela)->prox = NULL;
+}
 
+Tabela novoTabela(char *nome){
+	Tabela *caixa = (Tabela*) malloc(sizeof(Tabela));
+	strcpy(caixa->nome, nome);
+	caixa->prox = caixa->ant = NULL;
+}
 
 
