@@ -57,4 +57,12 @@ char *convertStringToChar(String *string) {
 	return caracteres;
 }
 
+void limpaString(String **string) {
+	Caractere *remove = (*string)->inicio;
+	while((*string)->inicio != NULL) {
+		(*string)->inicio = (*string)->inicio->prox;
+		free(remove);
+		remove = (*string)->inicio;
+	}
+}
 
