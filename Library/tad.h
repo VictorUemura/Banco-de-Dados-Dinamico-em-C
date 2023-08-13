@@ -5,7 +5,7 @@ typedef struct Dado {
 		float valorN;
 		char valorD[11];
 		char valorC;
-		char valorT[20];
+		char valorT[21];
 	};
 	struct Dado *prox;
 } Dado;
