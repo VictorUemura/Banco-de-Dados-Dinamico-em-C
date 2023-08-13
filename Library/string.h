@@ -13,6 +13,7 @@ typedef struct String {
 } String;
 
 void inicString(String **string) {
+	*string = (String *) malloc(sizeof(String));
 	(*string)->inicio = NULL;
 	(*string)->fim = NULL;
 	(*string)->tam = 0;
