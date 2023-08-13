@@ -15,7 +15,7 @@ typedef struct PColuna {
 	char *campo;
 	char pk;
 	Dado *pDados;
-	Dado *fk;	
+	struct PColuna *fk;	
 	struct PColuna *prox;
 } PColuna;
 
