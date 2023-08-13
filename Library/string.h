@@ -27,15 +27,15 @@ Caractere *novoCaractere(char carac) {
 // Adiciona caractere no final da string
 void addCaractere(String **string, char carac) {
 	Caractere *c = novoCaractere(carac);
-	if(*string->inicio == NULL) {
-		*string->inicio = *string->fim = c;
+	if((*string)->inicio == NULL) {
+		(*string)->inicio = (*string)->fim = c;
 	}
 	else {
-		c->ant = *string->fim;
-		*string->fim->prox = c;
-		*string->fim = c;
+		c->ant = (*string)->fim;
+		(*string)->fim->prox = c;
+		(*string)->fim = c;
 	}
-	*string->tam++;
+	(*string)->tam++;
 }
 
 
