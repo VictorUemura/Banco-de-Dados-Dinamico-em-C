@@ -138,3 +138,4 @@ void insereColuna(PColuna **listaColuna, char tipo, char *campo, char pk) {
 	}
 }
 
+void insere
