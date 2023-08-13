@@ -66,3 +66,10 @@ void limpaString(String **string) {
 	}
 }
 
+void exibeString(String *string) {
+	while(string->inicio != NULL) {
+		printf("%c", string->inicio->C);
+		string->inicio = string->inicio->prox;
+	}
+}
+
