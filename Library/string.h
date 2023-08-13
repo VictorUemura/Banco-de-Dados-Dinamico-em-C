@@ -38,4 +38,13 @@ void addCaractere(String **string, char carac) {
 	(*string)->tam++;
 }
 
+String *convertCharToString(char *caractere) {
+	String *novaString;
+	inicString(&novaString);
+	for(int i = 0; caractere[i] != '\0'; i++) {
+		addCaractere(&novaString, caractere[i]);
+	}
+	addCaractere(&novaString, '\0');
+	return novaString;
+}
 
