@@ -4,6 +4,6 @@
 #include "../library/string.h"
 
 int main(void) {
-
+	printf("%d", stricmp("Beee", "b"));
 	return 0;
 }
