@@ -18,3 +18,25 @@ char strcmp(char *string1, char *string2) {
 	else
 		return 1;
 }
+
+char stricmp(char *string1, char *string2) {
+	int i = 0;
+	char caractere1, caractere2;
+	do {
+		caractere1 = string1[i];
+		caractere2 = string2[i];
+		if(caractere1 >= 65 && caractere1 <= 90)
+			caractere1 += 32;
+		if(caractere2 >= 65 && caractere2 <= 90)
+			caractere1 += 32;
+		if(caractere1 == caractere2)
+			i++;
+	} while(string1[i] != '\0' && string2[i] != '\0' && caractere1 == caractere2);
+	if((string1[i] == '\0' && string2[i] != '\0') || caractere1 < caractere2)
+		return -1;
+	else if((string1[i] != '\0' && string2[i] == '\0') || caractere1 > caractere2)	
+		return 1;
+	else
+		return 0;
+}
+
