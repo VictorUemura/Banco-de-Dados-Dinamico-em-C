@@ -138,4 +138,30 @@ void insereColuna(PColuna **listaColuna, char tipo, char *campo, char pk) {
 	}
 }
 
-void insere
+// Insere tabela no final
+void insereTabela(Tabela **listaTabela, char *nome) {
+	Tabela *novaTabela = novoTabela(nome), *tabelaAux = *listaTabela;
+	if(*listaTabela == NULL) {
+		*listaTabela = novaTabela;
+	} else {
+		while(listaTabela->prox != NULL) {
+			listaTabela = listaTabela->prox;
+		}
+		novaTabela->ant = tabelaAux;
+		tabelaAux->prox = novaTabela;
+	}
+}
+
+void insereChaveEstrangeira(Tabela **listaTabela, PColuna *colunaEstrangeira, char *nome) {
+	PColuna *colunaAux = (*listaTabela)->coluna; 
+	PColuna *novaColuna = novoPColuna(colunaEstrangeira->tipo, colunaEstrangeira->campo, colunaEstrangeira->pk);
+	novaColuna->fk = colunaEstrangeira;
+	if((*listaTabela)->coluna == NULL)
+		(*listaTabela)->coluna = novaColuna;
+	else {
+		while(colunaAux->prox != NULL) {
+			colunaAux = colunaAux->prox;
+		}
+		colunaAux->prox = novaColuna;
+	}
+}
