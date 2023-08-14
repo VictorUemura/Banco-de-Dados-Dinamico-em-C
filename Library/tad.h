@@ -165,3 +165,12 @@ void insereChaveEstrangeira(Tabela **listaTabela, PColuna *colunaEstrangeira, ch
 		colunaAux->prox = novaColuna;
 	}
 }
+
+Tabela *buscaTabela(Tabela *lista, char *nome) {
+	while(lista != NULL && strcmp(nome, lista->nome) != 0)
+		lista = lista->prox;
+	if(lista == NULL)
+		return NULL;
+	else
+		return lista;
+} 
