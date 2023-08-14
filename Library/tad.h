@@ -59,7 +59,7 @@ Dado *novoDadoIdade(char *id){
 	return caixa;
 }
 
-Dado *novoDadoCaractere(char *c){
+Dado *novoDadoCaractere(char c){
 	Dado *caixa = (Dado*) malloc(sizeof(Dado));
 	caixa->valorC = c;
 	caixa->prox = NULL;
@@ -127,7 +127,7 @@ BancoDado *novoBancoDado(char *nome){
 }
 
 void insereColuna(PColuna **listaColuna, char tipo, char *campo, char pk) {
-	PColuna *coluna = novaPColuna(tipo, campo, pk), *colunaAux = *listaColuna;
+	PColuna *coluna = novoPColuna(tipo, campo, pk), *colunaAux = *listaColuna;
 	if(*listaColuna == NULL) {
 		*listaColuna = coluna;
 	}
@@ -144,8 +144,8 @@ void insereTabela(Tabela **listaTabela, char *nome) {
 	if(*listaTabela == NULL) {
 		*listaTabela = novaTabela;
 	} else {
-		while(listaTabela->prox != NULL) {
-			listaTabela = listaTabela->prox;
+		while(tabelaAux->prox != NULL) {
+			tabelaAux = tabelaAux->prox;
 		}
 		novaTabela->ant = tabelaAux;
 		tabelaAux->prox = novaTabela;
@@ -174,3 +174,4 @@ Tabela *buscaTabela(Tabela *lista, char *nome) {
 	else
 		return lista;
 } 
+
