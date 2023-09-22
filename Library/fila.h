@@ -24,7 +24,7 @@ FilaString *criaCaixa(char texto[100]){
 	return caixa;
 } 
 
-void enqueue(DescFilaString *D, char texto[100]){
+void enqueue(DescFilaString *D, char texto[]){
 	FilaString *caixa, *aux;
 	caixa = criaCaixa(texto);
 	if(D->inicio == NULL)
@@ -36,7 +36,7 @@ void enqueue(DescFilaString *D, char texto[100]){
 	
 }
 
-void unqueue(DescFilaString *D, char string[100]){
+void unqueue(DescFilaString *D, char string[]){
 	FilaString *aux;
 	strcpy(string, D->inicio->texto);
 	aux = D->inicio;
