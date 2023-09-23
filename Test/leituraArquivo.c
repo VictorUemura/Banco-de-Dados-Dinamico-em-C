@@ -52,7 +52,7 @@ void pegaVariavel(char string[], char nome[]){
 
 void criaListas(DescFilaString *D){
 	int i;
-	char string[100], nome[100], nomeV[100];
+	char string[100], nome[100], nomeV[100], nomeFK[100], nomeFK2[100], nomeFK3[100];
 	unqueue(D, string);
 	while(!filaVazia(D)){
 
@@ -105,7 +105,19 @@ void criaListas(DescFilaString *D){
 		}
 	
 		else if(verificaString(string, "ALTER TABLE")){
-			
+			indexString(string, "ALTER TABLE", &i);
+			pegaNome(string, i, nomeFK);
+			printf("%s\n", nomeFK);
+			indexString(string, "CONSTRAINT", &i);
+			pegaNome(string, i, nomeV);
+			printf("%s\n", nomeV);
+			unqueue(D, string);
+			indexString(string, "FOREIGN KEY", &i);
+			pegaNome(string, i, nomeFK2);
+			printf("%s\n", nomeFK2);
+			indexString(string, "REFERENCES", &i);
+			pegaNome(string, i, nomeFK3);
+			printf("%s\n", nomeFK3);
 		}
 		unqueue(D, string);
 	}
@@ -124,6 +136,7 @@ void leituraArquivo(){
 		enqueue(&D, string);
 		fscanf(ptrArq, "%[^\n]\n", &string);
 	}
+	enqueue(&D, string);
 	
 	criaListas(&D);
 	
