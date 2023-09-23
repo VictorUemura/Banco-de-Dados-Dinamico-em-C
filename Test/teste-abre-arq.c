@@ -6,7 +6,7 @@
 #include "../Library/leituraArquivo.h"
 
 int main(void) {
-	DescFilaString D;
+	DescFilaString D, C;
 	char unq[100];
 	
 	// Teste da fila de strings
@@ -26,7 +26,8 @@ int main(void) {
 	exibeFila(D);
 	
 	// Teste leitura de arquivos e criação de lista de string
-	leituraArquivo();
+	leituraArquivo(&C, "texto.txt");
+	exibeFila(C);
 	
 	return 0;
 }
