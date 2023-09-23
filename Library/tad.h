@@ -1,177 +1,123 @@
+union Tipo {
+	int valorI;
+	float valorN;
+	char valorD[11];
+	char valorC;
+	char valorT[21];
+};
 
 typedef struct Dado {
-	union {
-		int valorI;
-		float valorN;
-		char valorD[11];
-		char valorC;
-		char valorT[21];
-	};
+	union Tipo tipo;
 	struct Dado *prox;
 } Dado;
 
 typedef struct PColuna {
-	char tipo;
-	char *campo;
-	char pk;
-	Dado *pDados;
-	struct PColuna *fk;	
-	struct PColuna *prox;
+	char tipo, campo[100], pk;
+	Dado *pDados, *pAtual;
+	struct PColuna *fk, *prox;
 } PColuna;
 
 typedef struct Tabela {
-	char *nome;
+	char nome[100];
 	PColuna *coluna;
-	struct Tabela *ant;
-	struct Tabela *prox;
+	struct Tabela *ant, *prox;
 } Tabela;
 
 typedef struct BancoDado {
-	char *nome;
+	char nome[100];
 	Tabela *tabela;
 } BancoDado;
 
-void inicListaDado(Dado **dado){
-	(*dado)->prox = NULL;
+void initBancoDado(BancoDado **B) {
+	*B = NULL;
 }
 
-Dado *novoDadoInt(int num){
-	Dado *caixa = (Dado*) malloc(sizeof(Dado));;
-	caixa->valorI = num;
-	caixa->prox = NULL;
+void novoBancoDado(BancoDado **B, char *nome) {
+	*B = (BancoDado *) malloc(sizeof(BancoDado));
+	(*B)->tabela = NULL;
+	strcpy((*B)->nome, nome);
+}
+
+void novaTabela(Tabela **T, char *nome) {
+	*T = (Tabela *) malloc(sizeof(Tabela));
+	(*T)->ant = (*T)->prox = NULL;
+	(*T)->coluna = NULL;
+	strcpy((*T)->nome, nome);
+}
+
+void insereTabela(BancoDado **B, char *nome) {
+	Tabela *T, *aux;
+	novaTabela(&T, nome);
 	
-	return caixa;
-}
-
-Dado *novoDadoFloat(float num){
-	Dado *caixa = (Dado*) malloc(sizeof(Dado));
-	caixa->valorN = num;
-	caixa->prox = NULL;
-	
-	return caixa;
-}
-
-Dado *novoDadoIdade(char *id){
-	Dado *caixa = (Dado*) malloc(sizeof(Dado));
-	strcpy(caixa->valorD, id);
-	caixa->prox = NULL;
-	
-	return caixa;
-}
-
-Dado *novoDadoCaractere(char c){
-	Dado *caixa = (Dado*) malloc(sizeof(Dado));
-	caixa->valorC = c;
-	caixa->prox = NULL;
-	
-	return caixa;
-}
-
-Dado *novoDadoString(char *string){
-	Dado *caixa = (Dado*) malloc(sizeof(Dado));
-	strcpy(caixa->valorT, string);
-	caixa->prox = NULL;
-	
-	return caixa;
-} 
-
-// Insere dados no final da lista de dados
-void insereDado(Dado **lista, Dado *novoDado) {
-	Dado *inicioAux = *lista;
-	if(*lista == NULL)
-		*lista = novoDado;
-	else {
-		while(inicioAux->prox != NULL)
-			inicioAux = inicioAux->prox;
-		inicioAux->prox = novoDado;
-	}
-}
-
-void inicListaPColuna(PColuna **coluna){
-	*coluna = NULL;
-}
-
-PColuna *novoPColuna(char tipo, char *campo, char pk){
-	PColuna *caixa = (PColuna*) malloc(sizeof(PColuna));
-	caixa->tipo = tipo;
-	strcpy(caixa->campo, campo);
-	caixa->pk = pk;
-	caixa->pDados = NULL;
-	caixa->fk = caixa->prox = NULL;
-	
-	return caixa;
-}
-
-void inicTabela(Tabela **tabela){
-	(*tabela)->coluna = NULL;
-	(*tabela)->ant = (*tabela)->prox = NULL;
-}
-
-Tabela *novoTabela(char *nome){
-	Tabela *caixa = (Tabela*) malloc(sizeof(Tabela));
-	strcpy(caixa->nome, nome);
-	caixa->prox = caixa->ant = NULL;
-	
-	return caixa;
-}
-
-void inicBancoDados(BancoDado **banco){
-	(*banco)->tabela = NULL;
-}
-
-BancoDado *novoBancoDado(char *nome){
-	BancoDado *caixa = (BancoDado*) malloc(sizeof(BancoDado));
-	caixa->tabela = NULL;
-	strcpy(caixa->nome, nome);
-	return caixa;
-}
-
-void insereColuna(PColuna **listaColuna, char tipo, char *campo, char pk) {
-	PColuna *coluna = novoPColuna(tipo, campo, pk), *colunaAux = *listaColuna;
-	if(*listaColuna == NULL) {
-		*listaColuna = coluna;
+	if((*B)->tabela == NULL) {
+		(*B)->tabela = T;
 	}
 	else {
-		while(colunaAux->prox != NULL)
-			colunaAux = colunaAux->prox;
-		colunaAux->prox = coluna;
+		aux = (*B)->tabela;
+		while(aux->prox != NULL)
+			aux = aux->prox;
+		aux->prox = T;
+		T->ant = aux;
 	}
 }
 
-// Insere tabela no final
-void insereTabela(Tabela **listaTabela, char *nome) {
-	Tabela *novaTabela = novoTabela(nome), *tabelaAux = *listaTabela;
-	if(*listaTabela == NULL) {
-		*listaTabela = novaTabela;
-	} else {
-		while(tabelaAux->prox != NULL) {
-			tabelaAux = tabelaAux->prox;
+void novaColuna(PColuna **C, char *campo, char tipo, char pk) {
+	*C = (PColuna *) malloc(sizeof(PColuna));
+	(*C)->pk = pk;
+	(*C)->tipo = tipo;
+	(*C)->fk = (*C)->prox = NULL;
+	(*C)->pDados = (*C)->pAtual = NULL;
+	strcpy((*C)->campo, campo);
+}
+
+void insereColuna(Tabela **T, char *campo, char tipo, char pk) {
+	PColuna *C, *aux;
+	novaColuna(&C, campo, tipo, pk);
+	
+	if((*T)->coluna == NULL)
+		(*T)->coluna = C;
+	else {
+		aux = (*T)->coluna;
+		while(aux->prox != NULL)
+			aux = aux->prox;
+		aux->prox = C;
+	}
+}
+
+// Insere coluna em uma tabela com seu nome indicado por parâmetro
+void insereColunaTabela(BancoDado **B, char *campo, char tipo, char pk, char *nomeTabela) {
+	Tabela *aux = (*B)->tabela;
+	while(aux != NULL && strcmp(aux->nome, nomeTabela) != 0)
+		aux = aux->prox;
+	if(aux != NULL)
+		insereColuna(&aux, campo, tipo, pk);
+}
+
+void insereChaveEstrangeira(BancoDado **B, char *nomeTabela, char *nomeColuna, char *nomeTabelaFK, char *nomeColunaFK) {
+	Tabela *T = (*B)->tabela;
+	PColuna *C1, *C2;
+	// Busca tabela estrangeira
+	while(T != NULL && strcmp(T->nome, nomeTabelaFK) != 0)
+		T = T->prox;
+	if(T != NULL) {
+		// Busca coluna estrangeira
+		C1 = T->coluna;
+		while(C1 != NULL && strcmp(C1->campo, nomeColunaFK) != 0)
+			C1 = C1->prox;
+		if(C1 != NULL) {
+			T = (*B)->tabela;
+			// Busca tabela para inserção
+			while(T != NULL && strcmp(T->nome, nomeTabela) != 0)
+				T = T->prox;
+			if(T != NULL) {
+				C2 = T->coluna;
+				// Busca coluna para inserção
+				while(C2 != NULL && strcmp(C2->campo, nomeColuna))
+					C2 = C2->prox;
+				if(C2 != NULL)
+					C2->fk = C1;
+			}
 		}
-		novaTabela->ant = tabelaAux;
-		tabelaAux->prox = novaTabela;
 	}
 }
-
-void insereChaveEstrangeira(Tabela **listaTabela, PColuna *colunaEstrangeira, char *nome) {
-	PColuna *colunaAux = (*listaTabela)->coluna; 
-	PColuna *novaColuna = novoPColuna(colunaEstrangeira->tipo, colunaEstrangeira->campo, colunaEstrangeira->pk);
-	novaColuna->fk = colunaEstrangeira;
-	if((*listaTabela)->coluna == NULL)
-		(*listaTabela)->coluna = novaColuna;
-	else {
-		while(colunaAux->prox != NULL) {
-			colunaAux = colunaAux->prox;
-		}
-		colunaAux->prox = novaColuna;
-	}
-}
-
-Tabela *buscaTabela(Tabela *lista, char *nome) {
-	while(lista != NULL && strcmp(nome, lista->nome) != 0)
-		lista = lista->prox;
-	if(lista == NULL)
-		return NULL;
-	else
-		return lista;
-} 
 
