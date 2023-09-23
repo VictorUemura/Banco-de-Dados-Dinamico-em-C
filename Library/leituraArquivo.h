@@ -1,9 +1,3 @@
-#include<stdio.h>
-#include<conio2.h>
-#include<string.h>
-#include<stdlib.h>
-#include "../library/fila.h"
-
 char verificaString(char *string, char *string2) {
 	int j = 0;
 	for(int i = 0; i < strlen(string) && j < strlen(string2); i++) {
@@ -141,9 +135,4 @@ void leituraArquivo(){
 	criaListas(&D);
 	
 	fclose(ptrArq);
-}
-
-int main(void){
-	leituraArquivo();
-	return 0;
 }
