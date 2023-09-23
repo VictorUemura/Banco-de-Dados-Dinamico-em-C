@@ -1,3 +1,21 @@
+// Busca uma string dentro de outra
+/*
+void verificaString(char *string, char *string2, int *inicio) {
+	int j = 0;
+	for(int i = 0; i < strlen(string) && j < strlen(string2); i++) {
+		if(string[i] == string2[0]) {
+				j = 0;
+				*inicio = i;
+			while(i < strlen(string) && j < strlen(string2) && string[i] == string2[j]) {
+				j++;
+				i++;
+			}
+		}
+	}
+	if(j != strlen(string2))
+		*inicio = -1;
+}
+*/
 char verificaString(char *string, char *string2) {
 	int j = 0;
 	for(int i = 0; i < strlen(string) && j < strlen(string2); i++) {
