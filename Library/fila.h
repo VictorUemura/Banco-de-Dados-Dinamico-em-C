@@ -31,17 +31,20 @@ void enqueue(DescFilaString *D, char texto[]){
 		D->fim->prox = caixa;
 		D->fim = caixa;
 	}
-	
 }
 
-void unqueue(DescFilaString *D, char **string){
+void unqueue(DescFilaString *D, char string[]){
 	FilaString *aux;
-	char *S;
-	strcpy(S, D->inicio->texto);
-	*string = S;
-	aux = D->inicio;
-	D->inicio = D->inicio->prox;
-	free(aux);
+	if(!filaVazia(D)) {
+		strcpy(string, D->inicio->texto);
+		aux = D->inicio;
+		D->inicio = aux->prox;
+		if(D->inicio == NULL)
+			D->fim = NULL;
+		free(aux);
+	}
+	else
+		string[0] = '\0';
 }
 
 void exibeFila(DescFilaString D) {

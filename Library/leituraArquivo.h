@@ -1,5 +1,4 @@
 // Busca uma string dentro de outra
-/*
 void verificaString(char *string, char *string2, int *inicio) {
 	int j = 0;
 	for(int i = 0; i < strlen(string) && j < strlen(string2); i++) {
@@ -15,7 +14,8 @@ void verificaString(char *string, char *string2, int *inicio) {
 	if(j != strlen(string2))
 		*inicio = -1;
 }
-*/
+
+/*
 char verificaString(char *string, char *string2) {
 	int j = 0;
 	for(int i = 0; i < strlen(string) && j < strlen(string2); i++) {
@@ -67,10 +67,10 @@ void criaListas(DescFilaString *D){
 	char string[100], nome[100], nomeV[100], nomeFK[100], nomeFK2[100], nomeFK3[100];
 	unqueue(D, string);
 	while(!filaVazia(D)){
-
+		
 		if(verificaString(string, "CREATE DATABASE")){
 		 	indexString(string, "CREATE DATABASE", &i);
-		 	pegaNome(string, i, nome);
+			pegaNome(string, i, nome);
 		 	printf("%s\n", nome);
 		}
 	
@@ -134,23 +134,54 @@ void criaListas(DescFilaString *D){
 		unqueue(D, string);
 	}
 }
+*/
+
+void criaFila(DescFilaString *L, DescFilaString *C) {
+	char linha[100], palavra[100];
+	int j, i;
+	
+	while(!filaVazia(L)) {
+		unqueue(L, linha);
+		i = 0;
+		while(i < strlen(linha)) {
+			j = 0;
+			if(linha[i] != ' ' && linha[i] != '(' && linha[i] != ')' && linha[i] != ',' && linha[i] != ';') {
+				while(i < strlen(linha) && linha[i] != '(' && linha[i] != ')' && linha[i] != ',' && linha[i] != ';' && linha[i] != ' ') {
+					palavra[j] = linha[i];
+					j++;
+					i++;
+				}
+				palavra[j] = '\0';
+				enqueue(C, palavra);
+			}
+			else if(linha[i] == '(' || linha[i] == ')' || linha[i] == ',' || linha[i] == ';') {
+				palavra[j] = linha[i];
+				j++;
+				palavra[j] = '\0';
+				enqueue(C, palavra);
+				i++;
+			}
+			else
+				i++;
+		}
+	}
+}
 
 void leituraArquivo(){
-	DescFilaString D;
+	DescFilaString L, C;
 	FILE *ptrArq = fopen("texto.txt", "r+");
 	char string[100];
 	
-	init(&D);
+	init(&L);
+	init(&C);
 	
-
 	fscanf(ptrArq, "%[^\n]\n", &string);
 	while(!feof(ptrArq)){
-		enqueue(&D, string);
+		enqueue(&L, string);
 		fscanf(ptrArq, "%[^\n]\n", &string);
 	}
-	enqueue(&D, string);
-	
-	criaListas(&D);
-	
+	enqueue(&L, string);
+	criaFila(&L, &C);
+	exibeFila(C);
 	fclose(ptrArq);
 }

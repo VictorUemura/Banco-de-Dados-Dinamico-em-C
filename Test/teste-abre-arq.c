@@ -5,10 +5,9 @@
 #include "../Library/fila.h"
 #include "../Library/leituraArquivo.h"
 
-
 int main(void) {
 	DescFilaString D;
-	char *unq;
+	char unq[100];
 	
 	// Teste da fila de strings
 	init(&D);
@@ -17,10 +16,17 @@ int main(void) {
 	enqueue(&D, "Elem. 3");
 	enqueue(&D, "Elem. 4");
 	exibeFila(D);
-	unqueue(&D, &unq);
+	unqueue(&D, unq);
 	printf("Elemento removido: %s\n", unq);
-	printf("Fila atualmente: ");
+	unqueue(&D, unq);
+	printf("Elemento removido: %s\n", unq);
+	unqueue(&D, unq);
+	printf("Elemento removido: %s\n", unq);
+	printf("Fila atualmente:\n");
 	exibeFila(D);
+	
+	// Teste leitura de arquivos e criação de lista de string
+	leituraArquivo();
 	
 	return 0;
 }
