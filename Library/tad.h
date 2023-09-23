@@ -1,6 +1,6 @@
 union Tipo {
 	int valorI;
-	float valorN;
+	double valorN;
 	char valorD[11];
 	char valorC;
 	char valorT[21];
@@ -118,6 +118,79 @@ void insereChaveEstrangeira(BancoDado **B, char *nomeTabela, char *nomeColuna, c
 					C2->fk = C1;
 			}
 		}
+	}
+}
+
+void novoDado(Dado **D) {
+	(*D) = (Dado *) malloc(sizeof(Dado));
+}
+
+void novoDadoI(Dado **D, int I) {
+	novoDado(&(*D));
+	(*D)->tipo.valorI = I;
+}
+
+void novoDadoT(Dado **D, char *T) {
+	novoDado(&(*D));
+	strcpy((*D)->tipo.valorD, T);
+}
+
+void novoDadoN(Dado **D, float N) {
+	novoDado(&(*D));
+	(*D)->tipo.valorN = N;
+}
+
+void novoDadoC(Dado **D, char C) {
+	novoDado(&(*D));
+	(*D)->tipo.valorC = C;
+}
+
+void converteNumeroI(char *dado, int *I) {
+	int valor = 1, i;
+	*I = 0;
+	for(i = strlen(dado) - 1; i >= 0; i--) {
+		*I += (dado[i] - 48) * valor;
+		valor *= 10;
+	}
+}
+
+void converteNumeroN(char *dado, double *N) {
+	int i;
+	double valor = 0.01;
+	*N = 0;
+	for(i = strlen(dado) - 1; i >= 0; i--) {
+		if(i == (strlen(dado) - 1) - 2)
+			i--;
+		*N += (dado[i] - 48) * valor;
+		valor *= 10;
+	}
+}
+
+void insereDado(PColuna **C, char *dado) {
+	Dado *aux, *D;
+	int I;
+	double N;
+	
+	if((*C)->tipo == 'N') {
+		converteNumeroN(dado, &N);
+		novoDadoN(&D, N);
+	}
+	else if((*C)->tipo == 'I') {
+		converteNumeroI(dado, &I);
+		novoDadoI(&D, I);
+	}
+	else if((*C)->tipo == 'C')
+		novoDadoC(&D, dado[0]);
+	else if((*C)->tipo == 'D' || (*C)->tipo == 'T')
+		novoDadoT(&D, dado);
+		
+	if((*C)->pDados == NULL)
+		(*C)->pDados = D;
+	else {
+		aux = (*C)->pDados;
+		while(aux->prox != NULL)
+			aux = aux->prox;
+		aux->prox = D;
 	}
 }
 

@@ -14,6 +14,8 @@ void exibeNomeColuna(Tabela *T) {
 }
 
 int main(void) {
+	int I;
+	double N;
 	BancoDado *B;
 	
 	// Teste criação de banco de dados
@@ -44,6 +46,27 @@ int main(void) {
 		printf("\nChave estrangeira inserida Tab. 2 -> Tab. 1: %s -> %s\n", B->tabela->prox->coluna->campo, B->tabela->coluna->fk->campo);
 	if(B->tabela->prox->coluna->fk != NULL)
 		printf("Chave estrangeira inserita Tab. 1 -> Tab. 2: %s -> %s\n", B->tabela->coluna->prox->prox->campo, B->tabela->prox->coluna->campo);
+	
+	// Teste conversão numérica
+	converteNumeroI("22", &I);
+	printf("Numero Convertido: %d\n", I);
+	converteNumeroI("134", &I);
+	printf("Numero Convertido: %d\n", I);
+	converteNumeroI("149", &I);
+	printf("Numero Convertido: %d\n", I);
+	
+	converteNumeroN("22,00", &N);
+	printf("Numero Convertido (Double): %.2lf\n", N);
+	converteNumeroN("22,05", &N);
+	printf("Numero Convertido (Double): %.2lf\n", N);
+	converteNumeroN("22,50", &N);
+	printf("Numero Convertido (Double): %.2lf\n", N);
+	converteNumeroN("344300,55", &N);
+	printf("Numero Convertido (Double): %.2lf\n", N);
+	
+	// Teste inserção de dado
+	insereDado(&B->tabela->coluna, "22");
+	printf("1 -> dado inserido na primeira coluna: %d\n", B->tabela->coluna->pDados->tipo.valorI);
 	
 	return 0;
 }
