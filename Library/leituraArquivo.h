@@ -33,7 +33,7 @@ void criaFila(DescFilaString *L, DescFilaString *C) {
 				palavra[j] = '\0';
 				enqueue(C, palavra);
 			}
-			else if(linha[i] == '(' || linha[i] == ')' || linha[i] == ',' || linha[i] == ';') {
+			else if(linha[i] == '(' || linha[i] == ')' || linha[i] == ',' || linha[i] == ';' || linha[i] == '\'') {
 				palavra[j] = linha[i];
 				j++;
 				palavra[j] = '\0';
