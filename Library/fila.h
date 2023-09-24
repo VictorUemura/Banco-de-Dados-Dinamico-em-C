@@ -53,3 +53,10 @@ void exibeFila(DescFilaString D) {
 		D.inicio = D.inicio->prox;
 	}
 }
+
+void topoFila(DescFilaString D, char string[]) {
+	if(!filaVazia(&D))
+		strcpy(string, D.inicio->texto);
+	else
+		strcpy(string, "");
+}
