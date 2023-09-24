@@ -17,6 +17,8 @@ int main(void) {
 	int I;
 	double N;
 	BancoDado *B;
+	Tabela *T;
+	PColuna *C;
 	
 	// Teste criação de banco de dados
 	initBancoDado(&B);
@@ -67,6 +69,11 @@ int main(void) {
 	// Teste inserção de dado
 	insereDado(&B->tabela->coluna, "22");
 	printf("1 -> dado inserido na primeira coluna: %d\n", B->tabela->coluna->pDados->tipo.valorI);
+	
+	// Teste de busca de coluna
+	buscaTabela(B, "Tab. 1", &T);
+	buscaColuna(&T, "Col. 3", &C);
+	printf("Coluna %s encontrada.\n", C->campo);
 	
 	return 0;
 }
