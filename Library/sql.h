@@ -119,3 +119,7 @@ void carregaScript(BancoDado **B, DescFilaString *F) {
 			
 	}
 }
+
+void comandoSelect(DescFilaString *F) {
+	
+}
