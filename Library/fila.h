@@ -16,14 +16,14 @@ char filaVazia(DescFilaString *D){
 	return D->inicio == NULL;
 }
 
-void *criaCaixa(char texto[100], FilaString **C){
+void *criaCaixa(char texto[], FilaString **C){
 	*C = (FilaString*) malloc(sizeof(FilaString));
 	strcpy((*C)->texto, texto);
 	(*C)->prox = NULL;
 } 
 
 void enqueue(DescFilaString *D, char texto[]){
-	FilaString *caixa, *aux;
+	FilaString *caixa;
 	criaCaixa(texto, &caixa);
 	if(D->inicio == NULL)
 		D->inicio = D->fim = caixa;
