@@ -54,7 +54,7 @@ void exibeFila(DescFilaString D) {
 	}
 }
 
-void topoFila(DescFilaString D, char string[]) {
+void topoFilaString(DescFilaString D, char string[]) {
 	if(!filaVazia(&D))
 		strcpy(string, D.inicio->texto);
 	else
