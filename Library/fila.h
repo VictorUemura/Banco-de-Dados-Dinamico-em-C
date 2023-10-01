@@ -1,5 +1,5 @@
 typedef struct FilaString{
-	char texto[100];
+	char texto[200];
 	struct FilaString *prox;
 	
 } FilaString;

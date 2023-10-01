@@ -16,7 +16,7 @@ void verificaString(char *string, char *string2, int *inicio) {
 }
 
 void criaFila(DescFilaString *L, DescFilaString *C) {
-	char linha[100], palavra[100];
+	char linha[200], palavra[100];
 	int j, i;
 	
 	while(!filaVazia(L)) {
@@ -25,7 +25,7 @@ void criaFila(DescFilaString *L, DescFilaString *C) {
 		while(i < strlen(linha)) {
 			j = 0;
 			if(linha[i] != ' ' && linha[i] != '(' && linha[i] != ')' && linha[i] != ',' && linha[i] != ';' && linha[i] != '\n' && linha[i] != '\'') {
-				while(i < strlen(linha) && linha[i] != '(' && linha[i] != ')' && linha[i] != ',' && linha[i] != ';' && linha[i] != ' ') {
+				while(i < strlen(linha) && linha[i] != '(' && linha[i] != ')' && linha[i] != ',' && linha[i] != ';' && linha[i] != ' ' && linha[i] != '\'') {
 					palavra[j] = linha[i];
 					j++;
 					i++;

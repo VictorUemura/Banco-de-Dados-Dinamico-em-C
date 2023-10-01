@@ -123,3 +123,94 @@ void carregaScript(BancoDado **B, DescFilaString *F) {
 void comandoSelect(DescFilaString *F) {
 	
 }
+
+void comandoInsert(BancoDado **B, DescFilaString *I){
+	char string[100],stringTabela[100], stringColuna[100];
+	DescFilaString COLUNA, VALORES;
+	Tabela *T;
+	PColuna *C;
+	Dado *D;
+	
+	init(&COLUNA);
+	init(&VALORES);
+	
+	unqueue(&(*I), string);
+	while(!filaVazia(I) && strcmp(string, ";") != 0){
+		if(strcmp(string,"INSERT")==0){
+			unqueue(&(*I), string);
+			if(strcmp(string, "INTO")==0){
+				unqueue(&(*I), string);
+				strcpy(stringTabela, string);
+				unqueue(&(*I), string);
+				do{
+					if(strcmp(string, "(") == 0)
+						unqueue(&(*I), string);
+					else if(strcmp(string, ")") == 0)
+						unqueue(&(*I), string);
+					else if(strcmp(string, ",") == 0)
+						unqueue(&(*I), string);
+					else{
+						enqueue(&COLUNA, string);
+						unqueue(&(*I), string);
+					}
+				}while(strcmp(string, "VALUES") != 0 && !filaVazia(I));
+			}
+		}
+		else if(strcmp(string, "VALUES") == 0){
+			unqueue(&(*I), string);
+			do{
+				if(strcmp(string, "(") == 0)
+					unqueue(&(*I), string);
+				else if(strcmp(string, ")") == 0)
+					unqueue(&(*I), string);
+				else if(strcmp(string, ",") == 0)
+					unqueue(&(*I), string);
+				else if(strcmp(string, "'") == 0)
+					unqueue(&(*I), string);
+				else{
+					if(strcmp(string, ";") != 0){
+						enqueue(&VALORES, string);
+						unqueue(&(*I), string);
+					}
+				}					
+			
+			}while(!filaVazia(I) && strcmp(string, ";") != 0);
+		}
+		else
+			unqueue(&(I), string);
+	}
+	
+	
+	buscaTabela(&(*B), stringTabela, &T);
+	while(!filaVazia(&COLUNA) || !filaVazia(&VALORES)){
+		unqueue(&COLUNA, stringColuna);
+		buscaColuna(&T, stringColuna, &C);
+		unqueue(&VALORES, string);
+		insereDado(&C, string);
+		D = C->pDados;
+		while(D->prox != NULL)
+			D = D->prox;
+		C->pAtual =  D;
+		if(C->fk != NULL){
+			if(C->fk->tipo == 'I'){
+				if(C->pAtual->tipo.valorI == C->fk->pAtual->tipo.valorI)
+					printf("Tem");
+			}
+			if(C->fk->tipo == 'C'){
+				if(C->pAtual->tipo.valorC == C->fk->pAtual->tipo.valorC)
+					printf("Tem");
+			}
+			if(C->fk->tipo == 'T'){
+				if(strcmp(C->pAtual->tipo.valorT, C->fk->pAtual->tipo.valorT) == 0)
+					printf("Tem");
+			}
+			if(C->fk->tipo == 'N'){
+				if(C->pAtual->tipo.valorN == C->fk->pAtual->tipo.valorN)
+					printf("Tem");
+			}
+			if(C->fk->tipo == 'D')
+				if(strcmp(C->fk->pAtual->tipo.valorD, C->pAtual->tipo.valorD) == 0)
+					printf("Tem");
+		}
+	}
+}
