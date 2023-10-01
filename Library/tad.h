@@ -194,19 +194,55 @@ void insereDado(PColuna **C, char *dado) {
 	}
 }
 
-void buscaColuna(Tabela **T, char *nomeC, PColuna **coluna) {
-	PColuna *C = (*T)->coluna;
-	while(C != NULL && strcmp(nomeC, C->campo) != 0)
+void buscaColuna(Tabela *T, char *nomeC, PColuna **coluna) {
+	PColuna *C;
+	C = T->coluna;
+	while(C != NULL && strcmp(nomeC, C->campo) != 0){
 		C = C->prox;
+	}
 	*coluna = C;
 }
 
 void buscaTabela(BancoDado **B, char *nomeT, Tabela **T) {
-	Tabela *A = (*B)->tabela;
-	while(A->prox != NULL && strcmp(nomeT, A->nome) != 0)
+	Tabela *A;
+	A = (*B)->tabela;
+	while(A != NULL && strcmp(nomeT, A->nome) != 0)	
 		A = A->prox;
-	if(strcmp(nomeT, A->nome) == 0)
+	if(A != NULL)
 		*T = A;
 	else
 		*T = NULL;
+}
+
+void exibeBanco(BancoDado *B) {
+	PColuna *C;
+	Tabela *T = B->tabela;
+	Dado *D;
+	int i;
+	while(T != NULL) {
+		printf("Nome tab. %s\n", T->nome);
+		C = T->coluna;
+		while(C != NULL) {
+			printf("Col.: %s - Tipo = %c - PK: %c - FK: ", C->campo, C->tipo, C->pk);
+			if(C->fk != NULL)
+				printf("%s\n", C->fk->campo);
+			else
+				printf("NULL\n");
+			D = C->pDados;
+			i = 0;
+			while(D != NULL) {
+				if(C->tipo == 'I')
+				printf("%d %d\n", ++i, D->tipo.valorI);
+				else if(C->tipo == 'T' || C->tipo == 'D')
+				printf("%d %s\n", ++i, D->tipo.valorT);
+				else if(C->tipo == 'N')
+				printf("%d %.2lf\n", ++i, D->tipo.valorN);
+				else if(C->tipo == 'I')
+				printf("%d %c\n", ++i, D->tipo.valorC);
+				D = D->prox;
+			}
+			C = C->prox;
+		}
+		T = T->prox;
+	}
 }
