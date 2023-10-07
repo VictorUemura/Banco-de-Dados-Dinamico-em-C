@@ -354,14 +354,14 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 			}while(!filaVazia(I) && strcmp(string, ";") != 0);
 		}
 		else
-			unqueue(&(I), string);
+			unqueue(&(*I), string);
 	}
 	
 	
 	buscaTabela(&(*B), stringTabela, &T);
 	while(!filaVazia(&COLUNA) || !filaVazia(&VALORES)){
 		unqueue(&COLUNA, stringColuna);
-		buscaColuna(&T, stringColuna, &C);
+		buscaColuna(T, stringColuna, &C);
 		unqueue(&VALORES, string);
 		insereDado(&C, string);
 		D = C->pDados;
