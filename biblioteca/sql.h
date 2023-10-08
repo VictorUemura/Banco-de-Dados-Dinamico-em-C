@@ -307,10 +307,10 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 						enqueue(&COLUNA, string);
 						unqueue(&(*I), string);
 					}
-				}while(strcmp(string, "VALUES") != 0 && !filaVazia(I));
+				}while(stricmp(string, "VALUES") != 0 && !filaVazia(I));
 			}
 		}
-		else if(strcmp(string, "VALUES") == 0){
+		else if(stricmp(string, "VALUES") == 0){
 			unqueue(&(*I), string);
 			do{
 				if(strcmp(string, "(") == 0)
