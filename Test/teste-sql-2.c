@@ -13,33 +13,38 @@
 
 int main(void) {
 	BancoDado *B;
+	ListaTabela *LT;
 	DescFilaString L, C, J;
 	char string[10000];
 	int i = 0;
+	
+	initListaT(&LT);
 	initBancoDado(&B);
 	init(&C);
 	init(&J);
 	init(&L);
-		
 	leituraArquivo(&J, "scriptdboficina.txt");
 	carregaScript(&B, &J);
-	exibeBanco(B);
 	gets(string);
 	while(strcmp(string, "a") != 0){
 		enqueue(&L, string);
 		gets(string);
 	}
 	criaFila(&L, &C);
-	exibeFila(C);
 	while(!filaVazia(&C)){
 		topoFilaString(C, string);
 		if(strcmp(string, "INSERT") == 0)
 			comandoInsert(&B, &C);
 	}
-	exibeBanco(B);
 	
-	printf("\n\n\n\n\n");
-	
+	strcpy(string, "* FROM veiculo WHERE combustivel = 'F';");
+	criaFilaS(string, &L);
+	comandoSelect(&L, &C, &J);
+	comandoFrom(&B, &L, &LT);
+	criaListaColuna(&LT, &C, &J);
+	comandoWhere(&LT, &L);
+	exibeListaT(LT);
+	exibeListaTDados(&LT);
 	return 0;
 }
 
