@@ -145,27 +145,6 @@ void novoDadoC(Dado **D, char C) {
 	(*D)->tipo.valorC = C;
 }
 
-void converteNumeroI(char *dado, int *I) {
-	int valor = 1, i;
-	*I = 0;
-	for(i = strlen(dado) - 1; i >= 0; i--) {
-		*I += (dado[i] - 48) * valor;
-		valor *= 10;
-	}
-}
-
-void converteNumeroN(char *dado, double *N) {
-	int i;
-	double valor = 0.01;
-	*N = 0;
-	for(i = strlen(dado) - 1; i >= 0; i--) {
-		if(i == (strlen(dado) - 1) - 2)
-			i--;
-		*N += (dado[i] - 48) * valor;
-		valor *= 10;
-	}
-}
-
 void insereDado(PColuna **C, char *dado) {
 	Dado *aux, *D;
 	int I;

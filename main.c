@@ -4,8 +4,8 @@
 #include <string.h>
 #include <windows.h>
 #include "./library/fila.h"
-#include "./library/tad.h"
 #include "./library/Refat/utils.h"
+#include "./library/Refat/tadBanco.h"
 
 int main(void) {
 	DescFilaString F;

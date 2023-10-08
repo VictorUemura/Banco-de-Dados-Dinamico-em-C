@@ -112,3 +112,26 @@ void leituraArquivo(DescFilaString *C, char *nomeArq){
 		fclose(ptrArq);
 	} 
 }
+
+// Converte numero para inteiro
+void converteNumeroI(char *dado, int *I) {
+	int valor = 1, i;
+	*I = 0;
+	for(i = strlen(dado) - 1; i >= 0; i--) {
+		*I += (dado[i] - 48) * valor;
+		valor *= 10;
+	}
+}
+
+// Converte numero para double
+void converteNumeroN(char *dado, double *N) {
+	int i;
+	double valor = 0.01;
+	*N = 0;
+	for(i = strlen(dado) - 1; i >= 0; i--) {
+		if(i == (strlen(dado) - 1) - 2)
+			i--;
+		*N += (dado[i] - 48) * valor;
+		valor *= 10;
+	}
+}
