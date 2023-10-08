@@ -123,6 +123,7 @@ void insereChaveEstrangeira(BancoDado **B, char *nomeTabela, char *nomeColuna, c
 
 void novoDado(Dado **D) {
 	(*D) = (Dado *) malloc(sizeof(Dado));
+	(*D)->prox = NULL;
 }
 
 void novoDadoI(Dado **D, int I) {
@@ -196,6 +197,13 @@ void buscaTabela(BancoDado **B, char *nomeT, Tabela **T) {
 		*T = NULL;
 }
 
+void buscaDado(PColuna *C, int N, Dado **D) {
+	Dado *A = C->pDados;
+	for(int i = 0; i < N; i++)
+		A = A->prox;
+	*D = A;
+}
+
 void exibeBanco(BancoDado *B) {
 	PColuna *C;
 	Tabela *T = B->tabela;
@@ -219,7 +227,7 @@ void exibeBanco(BancoDado *B) {
 				printf("%d %s\n", ++i, D->tipo.valorT);
 				else if(C->tipo == 'N')
 				printf("%d %.2lf\n", ++i, D->tipo.valorN);
-				else if(C->tipo == 'I')
+				else if(C->tipo == 'C')
 				printf("%d %c\n", ++i, D->tipo.valorC);
 				D = D->prox;
 			}

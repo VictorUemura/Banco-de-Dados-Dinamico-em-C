@@ -9,6 +9,32 @@ void initListaT(ListaTabela **L) {
 	*L = NULL;
 }
 
+// Pode ser usada so uma vez porque desfaz a fila de linhas 
+void exibeListaTDados(ListaTabela **L) {
+	int linha, i = 1;
+	Dado *D;
+	ListaColuna *A;
+	printf("Dados filtrados:\n");
+	while(!filaVaziaI((*L)->descFilaI)) {
+		unqueueI(&(*L)->descFilaI, &linha);
+		A = (*L)->listaColuna;
+		printf("%d\t", i++);
+		while(A != NULL) {
+			buscaDado(A->coluna, linha, &D);
+			if(A->coluna->tipo == 'I')
+				printf("%d\t", D->tipo.valorI);
+			else if(A->coluna->tipo == 'T' || A->coluna->tipo == 'D')
+				printf("%s\t", D->tipo.valorT);
+			else if(A->coluna->tipo == 'N')
+				printf("%.2lf\t", D->tipo.valorN);
+			else if(A->coluna->tipo == 'C')
+				printf("%c\t", D->tipo.valorC);
+			A = A->prox;
+		}
+		printf("\n");
+	}
+}
+
 void novaCaixaListaT(ListaTabela **L, Tabela **tabela) {
 	*L = (ListaTabela *) malloc(sizeof(ListaTabela));
 	(*L)->tabela = *tabela;
@@ -52,13 +78,16 @@ void buscaListaT(ListaTabela **L, char string[], ListaTabela **E) {
 
 void exibeListaT(ListaTabela *L) {
 	ListaColuna *A;
-	while(L != NULL) {
-		printf("%s\n", L->tabela->nome);
-		A = L->listaColuna;
+	ListaTabela *T = L;
+	while(T != NULL) {
+		printf("%s\n", T->tabela->nome);
+		A = T->listaColuna;
 		while(A != NULL) {
 			printf("Col.: %s\n", A->coluna->campo);
 			A = A->prox;
 		}
-		L = L->prox;
+		printf("Linhas:\n");
+		exibeFilaI(L->descFilaI);
+		T = T->prox;
 	}
 }

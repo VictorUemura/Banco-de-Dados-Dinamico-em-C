@@ -114,6 +114,8 @@ void carregaScript(BancoDado **B, DescFilaString *F) {
 	}
 }
 
+// Envia uma fila de string e retorna outra fila de string e uma se tiver tabela na primeira
+// linha do select
 void comandoSelect(DescFilaString *F, DescFilaString *C, DescFilaString *T) {
 	char string[100], stringAntes[100], stringDepois[100];
 	int verifica = -1;
@@ -186,8 +188,8 @@ void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T) {
 	}
 }
 
-// Fun��o que retorna uma fila com linhas em que se encontram aquela condi��o aplicada
-// Obs.: A condi��o � enviada como uma string dividida por DescFilaString
+// Funcao que retorna uma fila com linhas em que se encontram aquela condicao aplicada
+// Obs.: A condicao e enviada como uma string dividida por DescFilaString
 // A contagem das linha se inicia por 0
 void comandoWhere(ListaTabela **L, DescFilaString *F) {
 	int linha = 0, valorI, verifica, valorProxI;
@@ -197,6 +199,7 @@ void comandoWhere(ListaTabela **L, DescFilaString *F) {
 	ListaTabela *tab1, *tab2;
 	Dado *D;
 	unqueue(&(*F), string);
+	unqueue(&(*F), string);
 	buscaPonto(string, &verifica);
 	if(verifica > -1) {
 		verifica = -1;
@@ -204,7 +207,7 @@ void comandoWhere(ListaTabela **L, DescFilaString *F) {
 		buscaListaT(&(*L), stringAntes, &tab1);
 		buscaListaC(&(tab1->listaColuna), stringDepois, &col1);
 	}
-	// Significa que s� existe uma tabela dentro da lista
+	// Significa que existe uma tabela dentro da lista
 	else
 		buscaListaC(&((*L)->listaColuna), string, &col1);
 	unqueue(&(*F), string);
@@ -212,7 +215,7 @@ void comandoWhere(ListaTabela **L, DescFilaString *F) {
 	
 	unqueue(&(*F), string);
 	buscaPonto(string, &verifica);
-	// � n�mero ou nome de coluna
+	// e numero ou nome de coluna
 	if(verifica > -1) {
 		verifica = -1;
 		// Coluna tipo = 0
@@ -269,13 +272,24 @@ void comandoWhere(ListaTabela **L, DescFilaString *F) {
 			converteNumeroI(string, &valorProxI);
 	}
 	D = col1->coluna->pDados;
-	// Falta criar condi��es
-	while(D != NULL) {
-		if(strcmp(condicao, "=") == 0) {
-			
+	// Falta criar condicoes
+	// E se tiver duas tabelas???
+	// Se for uma chave estrangeira e outra que nao?
+	if(filaVaziaI((*L)->descFilaI))
+		while(D != NULL) {
+			// Tipo inteiro
+			if(tipo == '4') {
+				if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorI >= valorI && D->tipo.valorI <= valorProxI)
+					enqueueI(&(*L)->descFilaI, linha);
+				else if(strcmp(condicao, "=") == 0 && D->tipo.valorI == valorProxI)
+					enqueueI(&(*L)->descFilaI, linha);
+			} else if(tipo == '2') {
+				if(strcmp(condicao, "=") == 0 && D->tipo.valorC == valorC)
+					enqueueI(&(*L)->descFilaI, linha);
+			}
+			linha++;
+			D = D->prox;
 		}
-	}
-	
 }
 
 void comandoInsert(BancoDado **B, DescFilaString *I){
@@ -321,11 +335,9 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 					unqueue(&(*I), string);
 				else if(strcmp(string, "'") == 0)
 					unqueue(&(*I), string);
-				else{
-					if(strcmp(string, ";") != 0){
+				else if(strcmp(string, ";") != 0){
 						enqueue(&VALORES, string);
 						unqueue(&(*I), string);
-					}
 				}					
 			
 			}while(!filaVazia(I) && strcmp(string, ";") != 0);
@@ -333,38 +345,11 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 		else
 			unqueue(&(*I), string);
 	}
-	
-	
 	buscaTabela(&(*B), stringTabela, &T);
 	while(!filaVazia(&COLUNA) || !filaVazia(&VALORES)){
 		unqueue(&COLUNA, stringColuna);
 		buscaColuna(T, stringColuna, &C);
 		unqueue(&VALORES, string);
 		insereDado(&C, string);
-		D = C->pDados;
-		while(D->prox != NULL)
-			D = D->prox;
-		C->pAtual =  D;
-		if(C->fk != NULL){
-			if(C->fk->tipo == 'I'){
-				if(C->pAtual->tipo.valorI == C->fk->pAtual->tipo.valorI)
-					printf("Tem");
-			}
-			if(C->fk->tipo == 'C'){
-				if(C->pAtual->tipo.valorC == C->fk->pAtual->tipo.valorC)
-					printf("Tem");
-			}
-			if(C->fk->tipo == 'T'){
-				if(strcmp(C->pAtual->tipo.valorT, C->fk->pAtual->tipo.valorT) == 0)
-					printf("Tem");
-			}
-			if(C->fk->tipo == 'N'){
-				if(C->pAtual->tipo.valorN == C->fk->pAtual->tipo.valorN)
-					printf("Tem");
-			}
-			if(C->fk->tipo == 'D')
-				if(strcmp(C->fk->pAtual->tipo.valorD, C->pAtual->tipo.valorD) == 0)
-					printf("Tem");
-		}
 	}
 }
