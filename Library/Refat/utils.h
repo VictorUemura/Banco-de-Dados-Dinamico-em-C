@@ -91,3 +91,24 @@ void separaPonto(char texto[], char antes[], char depois[]) {
 	depois[j] = '\0';
 }
 
+// Faz a leitura de um arquivo texto e retorna por parametro uma lista de strings
+void leituraArquivo(DescFilaString *C, char *nomeArq){
+	DescFilaString L;
+	FILE *ptrArq = fopen(nomeArq, "r+");
+	char string[100];
+	
+	if(ptrArq != NULL) {
+		init(&L);
+		init(C);
+		
+		fscanf(ptrArq, "%[^\n]\n", &string);
+		while(!feof(ptrArq)){
+			enqueue(&L, string);
+			fscanf(ptrArq, "%[^\n]\n", &string);
+		}
+		
+		enqueue(&L, string);
+		criaFila(&L, C);
+		fclose(ptrArq);
+	} 
+}
