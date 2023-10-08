@@ -53,6 +53,7 @@ int main(void) {
 		
 	leituraArquivo(&J, "texto.txt");
 	carregaScript(&B, &J);
+	exibeBanco(B);
 	gets(string);
 	while(strcmp(string, "a") != 0){
 		enqueue(&L, string);
@@ -60,14 +61,12 @@ int main(void) {
 	}
 	criaFila(&L, &C);
 	while(!filaVazia(&C)){
-		topoFila(C, string);
+		topoFilaString(C, string);
 		if(strcmp(string, "INSERT") == 0)
 			comandoInsert(&B, &C);
-		//printf("aaa");
 	}
+	exibeBanco(B);
 	
-	
-	exibeTabela(B);
 	printf("\n\n\n\n\n");
 	
 	return 0;

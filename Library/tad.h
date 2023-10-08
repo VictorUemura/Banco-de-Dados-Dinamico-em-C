@@ -197,10 +197,13 @@ void insereDado(PColuna **C, char *dado) {
 void buscaColuna(Tabela *T, char *nomeC, PColuna **coluna) {
 	PColuna *C;
 	C = T->coluna;
-	while(C != NULL && strcmp(nomeC, C->campo) != 0){
+	while(C->prox != NULL && strcmp(nomeC, C->campo) != 0){
 		C = C->prox;
 	}
-	*coluna = C;
+	if(strcmp(nomeC, C->campo) == 0)
+		*coluna = C;
+	else
+		*coluna = NULL;
 }
 
 void buscaTabela(BancoDado **B, char *nomeT, Tabela **T) {

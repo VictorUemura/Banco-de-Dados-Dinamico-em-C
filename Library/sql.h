@@ -330,10 +330,10 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 						enqueue(&COLUNA, string);
 						unqueue(&(*I), string);
 					}
-				}while(strcmp(string, "VALUES") != 0 && !filaVazia(I));
+				}while(strcmp(string, "VALUES") != 0 && strcmp(string, "values") != 0 && !filaVazia(I));
 			}
 		}
-		else if(strcmp(string, "VALUES") == 0){
+		else if(strcmp(string, "VALUES") == 0 || strcmp(string, "values") == 0){
 			unqueue(&(*I), string);
 			do{
 				if(strcmp(string, "(") == 0)
@@ -344,19 +344,15 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 					unqueue(&(*I), string);
 				else if(strcmp(string, "'") == 0)
 					unqueue(&(*I), string);
-				else{
-					if(strcmp(string, ";") != 0){
-						enqueue(&VALORES, string);
-						unqueue(&(*I), string);
-					}
+				else if(strcmp(string, ";") != 0){
+					enqueue(&VALORES, string);
+					unqueue(&(*I), string);
 				}					
-			
 			}while(!filaVazia(I) && strcmp(string, ";") != 0);
 		}
 		else
 			unqueue(&(*I), string);
 	}
-	
 	
 	buscaTabela(&(*B), stringTabela, &T);
 	while(!filaVazia(&COLUNA) || !filaVazia(&VALORES)){
@@ -367,7 +363,7 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 		D = C->pDados;
 		while(D->prox != NULL)
 			D = D->prox;
-		C->pAtual =  D;
+		C->pAtual = D;
 		if(C->fk != NULL){
 			if(C->fk->tipo == 'I'){
 				if(C->pAtual->tipo.valorI == C->fk->pAtual->tipo.valorI)
@@ -391,3 +387,36 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 		}
 	}
 }
+
+//Testar o codigo de delete
+/*void comandoDelete(BancoDado **B, DescFilaString **F){
+	char string[100];
+	Tabela *T;
+	DescFilaString VALOR, COLUNA;
+	init(&VALOR);
+	init(&COLUNA);
+	
+	unqueue(&(*F), string);
+	while(!filaVazia(*F) && strcmp(string, ";") != 0){
+		if(strcmp(string, "DELETE") == 0){
+			if(strcmp(string, "FROM") == 0){
+				unqueue(&(*F), string);
+				buscaTabela(*B,string, &(*T));
+				unqueue(&(*F), string);
+				if(strcmp(string, "WHERE") == 0){
+					unqueue(&(*F), string);
+					enqueue(&COLUNA, string);
+					unqueue(&(*F), string);
+					if(strcmp(string, "=") == 0)
+						unqueue(&(*F), string);
+					unqueue(&(*F), string);
+					enqueue(&VALOR, string);
+				}
+			}
+		}
+		while(!filaVazia(&VALOR)){
+			unqueue(&VALOR, string);
+			printf("%s", string);
+		}
+	}
+}*/
