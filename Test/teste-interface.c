@@ -7,12 +7,12 @@ void telaMenu(){
 		if(i%2 == 0){
 			y++;
 			x = 1;
-			y2 = y2 + 10;
+			y2 = y2 + 5;
 			x2 = 0;
 		}
-		if(i != 0)
-			x2 = x2 + 20;
+
 		gotoxy(x*x2, y*y2);
+		x2 = x2 + 10;
 		printf("-");
 		x++;
 	}  
