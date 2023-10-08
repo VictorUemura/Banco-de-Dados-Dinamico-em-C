@@ -64,8 +64,8 @@ void criaFila(DescFilaString *L, DescFilaString *C) {
 	
 	while(!filaVazia(L)) {
 		unqueue(&(*L), linha);
-		criaFilaS(linha, &(*L));
-	}
+		criaFilaS(linha, &(*C));
+	};
 }
 
 // Busca ponto dentro da string
@@ -99,7 +99,7 @@ void leituraArquivo(DescFilaString *C, char *nomeArq){
 	
 	if(ptrArq != NULL) {
 		init(&L);
-		init(C);
+		init(&(*C));
 		
 		fscanf(ptrArq, "%[^\n]\n", &string);
 		while(!feof(ptrArq)){

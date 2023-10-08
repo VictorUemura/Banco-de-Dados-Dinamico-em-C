@@ -3,13 +3,13 @@
 #include <conio2.h>
 #include <string.h>
 #include <windows.h>
-#include "./library/tadFilaS.h"
-#include "./library/tadFilaI.h"
-#include "./library/utils.h"
-#include "./library/tadBanco.h"
-#include "./library/tadListaColuna.h"
-#include "./library/tadListaTabela.h"
-#include "./library/sql.h"
+#include "./biblioteca/tadFilaS.h"
+#include "./biblioteca/tadFilaI.h"
+#include "./biblioteca/utils.h"
+#include "./biblioteca/tadBanco.h"
+#include "./biblioteca/tadListaColuna.h"
+#include "./biblioteca/tadListaTabela.h"
+#include "./biblioteca/sql.h"
 
 
 int main(void) {

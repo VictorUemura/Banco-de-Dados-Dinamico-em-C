@@ -1,45 +1,15 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include "../Library/fila.h"
-#include "../Library/tad.h"
-#include "../Library/leituraArquivo.h"
-#include "../Library/filaI.h"
-#include "../Library/listaColuna.h"
-#include "../Library/listaTabela.h"
-#include "../Library/sql.h"
-
-void exibeTabela(BancoDado *B) {
-    PColuna *C;
-    Dado *D;
-    int i;
-    while(B->tabela != NULL) {
-        printf("Nome tab. %s\n", B->tabela->nome);
-        C = B->tabela->coluna;
-        while(C != NULL) {
-            printf("Col.: %s - Tipo = %c - PK: %c - FK: ", C->campo, C->tipo, C->pk);
-            if(C->fk != NULL)
-                printf("%s\n", C->fk->campo);
-            else
-                printf("NULL\n");
-            D = C->pDados;
-            i = 0;
-            while(D != NULL) {
-                if(C->tipo == 'I')
-                printf("%d %d\n", ++i, D->tipo.valorI);
-                else if(C->tipo == 'T' || C->tipo == 'D')
-                printf("%d %s\n", ++i, D->tipo.valorT);
-                else if(C->tipo == 'N')
-                printf("%d %.2lf\n", ++i, D->tipo.valorN);
-                else if(C->tipo == 'I')
-                printf("%d %c\n", ++i, D->tipo.valorC);
-                D = D->prox;
-            }
-            C = C->prox;
-        }
-        B->tabela =B->tabela->prox;
-    }
-}
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio2.h>
+#include <string.h>
+#include <windows.h>
+#include "../biblioteca/tadFilaS.h"
+#include "../biblioteca/tadFilaI.h"
+#include "../biblioteca/utils.h"
+#include "../biblioteca/tadBanco.h"
+#include "../biblioteca/tadListaColuna.h"
+#include "../biblioteca/tadListaTabela.h"
+#include "../biblioteca/sql.h"
 
 int main(void) {
 	BancoDado *B;
@@ -51,7 +21,7 @@ int main(void) {
 	init(&J);
 	init(&L);
 		
-	leituraArquivo(&J, "texto.txt");
+	leituraArquivo(&J, "scriptdboficina.txt");
 	carregaScript(&B, &J);
 	exibeBanco(B);
 	gets(string);
@@ -60,6 +30,7 @@ int main(void) {
 		gets(string);
 	}
 	criaFila(&L, &C);
+	exibeFila(C);
 	while(!filaVazia(&C)){
 		topoFilaString(C, string);
 		if(strcmp(string, "INSERT") == 0)
