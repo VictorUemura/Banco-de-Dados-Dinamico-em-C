@@ -38,8 +38,8 @@ void criaFilaS(char string[200], DescFilaString *L) {
 			j = 0;
 			
 		}
-		if(string[i] != ' ' && string[i] != '(' && string[i] != ')' && string[i] != ',' && string[i] != ';' && string[i] != '\n' && string[i] != '\'') {
-				while(i < strlen(string) && string[i] != '(' && string[i] != ')' && string[i] != ',' && string[i] != ';' && string[i] != ' ') {
+		if(string[i] != ' ' && string[i] != '(' && string[i] != ')' && string[i] != ',' && string[i] != ';' && string[i] != '\n' && string[i] != '\'' && string[i] != '"') {
+				while(i < strlen(string) && string[i] != '(' && string[i] != ')' && string[i] != ',' && string[i] != ';' && string[i] != ' ' && string[i] != '"') {
 					palavra[j] = string[i];
 					j++; i++;
 				}
@@ -64,8 +64,8 @@ void criaFila(DescFilaString *L, DescFilaString *C) {
 	
 	while(!filaVazia(L)) {
 		unqueue(&(*L), linha);
-		criaFilaS(linha, &(*L));
-	}
+		criaFilaS(linha, &(*C));
+	};
 }
 
 // Busca ponto dentro da string
@@ -99,7 +99,7 @@ void leituraArquivo(DescFilaString *C, char *nomeArq){
 	
 	if(ptrArq != NULL) {
 		init(&L);
-		init(C);
+		init(&(*C));
 		
 		fscanf(ptrArq, "%[^\n]\n", &string);
 		while(!feof(ptrArq)){
@@ -111,4 +111,27 @@ void leituraArquivo(DescFilaString *C, char *nomeArq){
 		criaFila(&L, C);
 		fclose(ptrArq);
 	} 
+}
+
+// Converte numero para inteiro
+void converteNumeroI(char *dado, int *I) {
+	int valor = 1, i;
+	*I = 0;
+	for(i = strlen(dado) - 1; i >= 0; i--) {
+		*I += (dado[i] - 48) * valor;
+		valor *= 10;
+	}
+}
+
+// Converte numero para double
+void converteNumeroN(char *dado, double *N) {
+	int i;
+	double valor = 0.01;
+	*N = 0;
+	for(i = strlen(dado) - 1; i >= 0; i--) {
+		if(i == (strlen(dado) - 1) - 2)
+			i--;
+		*N += (dado[i] - 48) * valor;
+		valor *= 10;
+	}
 }

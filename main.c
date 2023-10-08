@@ -3,9 +3,14 @@
 #include <conio2.h>
 #include <string.h>
 #include <windows.h>
-#include "./library/fila.h"
-#include "./library/tad.h"
-#include "./library/Refat/utils.h"
+#include "./biblioteca/tadFilaS.h"
+#include "./biblioteca/tadFilaI.h"
+#include "./biblioteca/utils.h"
+#include "./biblioteca/tadBanco.h"
+#include "./biblioteca/tadListaColuna.h"
+#include "./biblioteca/tadListaTabela.h"
+#include "./biblioteca/sql.h"
+
 
 int main(void) {
 	DescFilaString F;
