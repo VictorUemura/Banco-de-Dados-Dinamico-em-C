@@ -39,7 +39,7 @@ void criaFilaS(char string[200], DescFilaString *L) {
 			
 		}
 		if(string[i] != ' ' && string[i] != '(' && string[i] != ')' && string[i] != ',' && string[i] != ';' && string[i] != '\n' && string[i] != '\'' && string[i] != '"') {
-				while(i < strlen(string) && string[i] != '(' && string[i] != ')' && string[i] != ',' && string[i] != ';' && string[i] != ' ' && string[i] != '"') {
+				while(i < strlen(string) && string[i] != '(' && string[i] != ')' && string[i] != ',' && string[i] != ';' && string[i] != ' ' && string[i] != '\'' && string[i] != '"') {
 					palavra[j] = string[i];
 					j++; i++;
 				}
