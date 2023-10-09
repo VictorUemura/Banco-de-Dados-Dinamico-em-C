@@ -37,7 +37,7 @@ int main(void) {
 			comandoInsert(&B, &C);
 	}
 	// O comando e enviado sem o select
-	strcpy(string, "* FROM veiculo WHERE ano BETWEEN 1970 AND 2010;");
+	strcpy(string, "ordem_servico.id_os, ordem_servico.data_entrada, ordem_servico.id_veiculo, veiculo.modelo, veiculo.dono, os_servico.id_servico, servico.descricao FROM ordem_servico, veiculo, os_servico, servico WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_servico.id_os AND os_servico.id_servico = servico.id_servico;");
 	criaFilaS(string, &L);
 	comandoSelect(&L, &C, &J);
 	comandoFrom(&B, &L, &LT);
@@ -48,7 +48,7 @@ int main(void) {
 		topoFilaString(L, string);
 		if(strcmp(string, ";") == 0)
 				unqueue(&L, string);
-		
+
 		while(!filaVazia(&L)) {
 			comandoWhere(&LT, &L, 0);
 			topoFilaString(L, string);

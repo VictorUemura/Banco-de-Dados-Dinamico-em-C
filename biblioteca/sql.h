@@ -188,16 +188,29 @@ void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T) {
 	}
 }
 
+void comandoWhereGeral(ListaTabela **L) {
+	ListaTabela *copiaAux;
+	Dado *D;
+	copiaAux = (*L);
+		while(copiaAux != NULL) {
+			D = copiaAux->tabela->coluna->pDados;
+			for(int j = 0; D != NULL; j++, D = D->prox)
+				enqueueI(&copiaAux->descFilaI, j);
+			copiaAux = copiaAux->prox;
+		}
+}
+
 // Funcao que retorna uma fila com linhas em que se encontram aquela condicao aplicada
 // Obs.: A condicao e enviada como uma string dividida por DescFilaString
 // A contagem das linha se inicia por 0
 // Enviar uma fila auxiliar e depois fazer as comparacoes
 void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
-	int linha = 0, valorI, verifica, valorProxI, i;
+	int linha = 0, valorI, verifica, valorProxI, i, fora = 0, foraA = 0;
 	double valorN, valorProxN;
 	char string[100], condicao[100], valorC, valorT[100], stringAntes[100], stringDepois[100], tipo, valorProxT[100], valorProxC, achou;
 	ListaColuna *col1 = NULL, *col2 = NULL;
 	ListaTabela *tab1, *tab2 = NULL, *copiaAux;
+	PColuna *C;
 	DescFilaI filaA1, filaA2, filaA3;
 	Dado *D, *auxDado;
 
@@ -209,10 +222,20 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 		separaPonto(string, stringAntes, stringDepois);
 		buscaListaT(&(*L), stringAntes, &tab1);
 		buscaListaC(&(tab1->listaColuna), stringDepois, &col1);
+		if(col1 == NULL) {
+			buscaColuna(tab1->tabela, stringDepois, &C);
+			novaCaixaListaC(&col1, &C);
+			foraA = 1;
+		}
 	}
 	// Significa que existe uma apenas tabela dentro da lista
 	else {
 		buscaListaC(&(*L)->listaColuna, string, &col1);
+		if(col1 == NULL) {
+			buscaColuna(tab1->tabela, string, &C);
+			novaCaixaListaC(&col1, &C);
+			foraA = 1;
+		}
 		tab1 = (*L);
 	}
 	
@@ -229,6 +252,11 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 			separaPonto(string, stringAntes, stringDepois);
 			buscaListaT(&(*L), stringAntes, &tab2);
 			buscaListaC(&(tab2->listaColuna), stringDepois, &col2);
+			if(col2 == NULL) {
+				buscaColuna(tab2->tabela, stringDepois, &C);
+				novaCaixaListaC(&col2, &C);
+				fora = 1;
+			}
 			tipo = '0';
 		}
 		// Numero tipo = 1
@@ -278,15 +306,10 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 			converteNumeroI(string, &valorProxI);
 	}
 	if(pIteracao) {
-		copiaAux = (*L);
-		while(copiaAux != NULL) {
-			D = copiaAux->tabela->coluna->pDados;
-			for(int j = 0; D != NULL; j++, D = D->prox)
-				enqueueI(&copiaAux->descFilaI, j);
-			copiaAux = copiaAux->prox;
-		}
+		comandoWhereGeral(&(*L));
 	}
-	
+	initI(&filaA2);
+	initI(&filaA3);
 	initI(&filaA1);
 	
 	while(!filaVaziaI(tab1->descFilaI)) {
@@ -294,19 +317,16 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 		enqueueI(&filaA1, i);
 	}
 	if(tab2 != NULL) {
-		initI(&filaA2);
-		initI(&filaA3);
 		while(!filaVaziaI(tab2->descFilaI)) {
 			unqueueI(&tab2->descFilaI, &i);
 			enqueueI(&filaA2, i);
 		}
 	}
-	
 	while(!filaVaziaI(filaA1)) {
 		unqueueI(&filaA1, &linha);
 		buscaDado(col1->coluna, linha, &D);	
 		// Tipo inteiro
-		if(tipo == '4') {
+		if(tipo == '4') {								
 			if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorI >= valorI && D->tipo.valorI <= valorProxI)
 				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "=") == 0 && D->tipo.valorI == valorI)
@@ -402,25 +422,15 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<>") == 0 && strcmp(D->tipo.valorT, valorT) != 0)
 				enqueueI(&tab1->descFilaI, linha);
-				
+
 		}
 	}
-
 	while(!filaVaziaI(filaA2))
 		unqueueI(&filaA2, &i);
-
-}
-
-void comandoWhereGeral(ListaTabela **L) {
-	ListaTabela *copiaAux;
-	Dado *D;
-	copiaAux = (*L);
-		while(copiaAux != NULL) {
-			D = copiaAux->tabela->coluna->pDados;
-			for(int j = 0; D != NULL; j++, D = D->prox)
-				enqueueI(&copiaAux->descFilaI, j);
-			copiaAux = copiaAux->prox;
-		}
+	if(fora)
+		free(col2);
+	if(foraA)
+		free(col1);
 }
 
 void comandoInsert(BancoDado **B, DescFilaString *I){
