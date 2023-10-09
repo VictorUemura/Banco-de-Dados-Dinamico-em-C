@@ -13,25 +13,31 @@ void initListaT(ListaTabela **L) {
 void exibeListaTDados(ListaTabela **L) {
 	int linha, i = 1;
 	Dado *D;
+	ListaTabela *T = (*L);
 	ListaColuna *A;
 	printf("Dados filtrados:\n");
-	while(!filaVaziaI((*L)->descFilaI)) {
-		unqueueI(&(*L)->descFilaI, &linha);
-		A = (*L)->listaColuna;
-		printf("%d\t", i++);
-		while(A != NULL) {
-			buscaDado(A->coluna, linha, &D);
-			if(A->coluna->tipo == 'I')
-				printf("%d\t", D->tipo.valorI);
-			else if(A->coluna->tipo == 'T' || A->coluna->tipo == 'D')
-				printf("%s\t", D->tipo.valorT);
-			else if(A->coluna->tipo == 'N')
-				printf("%.2lf\t", D->tipo.valorN);
-			else if(A->coluna->tipo == 'C')
-				printf("%c\t", D->tipo.valorC);
-			A = A->prox;
+	while(T != NULL) {
+		printf("%s\n", T->tabela->nome);
+		while(!filaVaziaI(T->descFilaI)) {
+			unqueueI(&T->descFilaI, &linha);
+			A = T->listaColuna;
+			printf("%d\t", i++);
+			while(A != NULL) {
+				buscaDado(A->coluna, linha, &D);
+				if(A->coluna->tipo == 'I')
+					printf("%d\t", D->tipo.valorI);
+				else if(A->coluna->tipo == 'T' || A->coluna->tipo == 'D')
+					printf("%s\t", D->tipo.valorT);
+				else if(A->coluna->tipo == 'N')
+					printf("%.2lf\t", D->tipo.valorN);
+				else if(A->coluna->tipo == 'C')
+					printf("%c\t", D->tipo.valorC);
+				A = A->prox;
+			}
+			printf("\n");
 		}
-		printf("\n");
+		i = 1;
+		T = T->prox;
 	}
 }
 
@@ -87,7 +93,7 @@ void exibeListaT(ListaTabela *L) {
 			A = A->prox;
 		}
 		printf("Linhas:\n");
-		exibeFilaI(L->descFilaI);
+		exibeFilaI(T->descFilaI);
 		T = T->prox;
 	}
 }

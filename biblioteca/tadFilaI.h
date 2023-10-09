@@ -52,3 +52,15 @@ void exibeFilaI(DescFilaI F) {
 		F.inicio = F.inicio->prox;
 	}
 }
+
+char existeI(int num, DescFilaI F) {
+	Fila *A = F.inicio;
+	while(A != NULL && A->valor != num)
+		A = A->prox;
+	if(A != NULL)
+		return 1;
+	else
+		return 0;
+}
+
+

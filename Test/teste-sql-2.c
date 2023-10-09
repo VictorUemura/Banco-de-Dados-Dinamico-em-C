@@ -37,13 +37,12 @@ int main(void) {
 			comandoInsert(&B, &C);
 	}
 	
-	strcpy(string, "* FROM veiculo WHERE combustivel = 'F';");
+	strcpy(string, "* FROM ordem_servico, os_servico WHERE ordem_servico.id_os = os_servico.id_os;");
 	criaFilaS(string, &L);
 	comandoSelect(&L, &C, &J);
 	comandoFrom(&B, &L, &LT);
 	criaListaColuna(&LT, &C, &J);
-	comandoWhere(&LT, &L);
-	exibeListaT(LT);
+	comandoWhere(&LT, &L, 1);
 	exibeListaTDados(&LT);
 	return 0;
 }

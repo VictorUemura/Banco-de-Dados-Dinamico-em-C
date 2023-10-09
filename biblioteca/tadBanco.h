@@ -152,7 +152,7 @@ void insereDado(PColuna **C, char *dado) {
 	double N;
 	
 	if((*C)->tipo == 'N') {
-		converteNumeroN(dado, &N);
+		N = atof(dado);
 		novoDadoN(&D, N);
 	}
 	else if((*C)->tipo == 'I') {

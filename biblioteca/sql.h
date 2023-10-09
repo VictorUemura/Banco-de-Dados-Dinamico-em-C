@@ -191,13 +191,15 @@ void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T) {
 // Funcao que retorna uma fila com linhas em que se encontram aquela condicao aplicada
 // Obs.: A condicao e enviada como uma string dividida por DescFilaString
 // A contagem das linha se inicia por 0
-void comandoWhere(ListaTabela **L, DescFilaString *F) {
-	int linha = 0, valorI, verifica, valorProxI;
+// Enviar uma fila auxiliar e depois fazer as comparacoes
+void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
+	int linha = 0, valorI, verifica, valorProxI, i;
 	double valorN, valorProxN;
-	char string[100], condicao[100], valorC, valorT[100], stringAntes[100], stringDepois[100], tipo, valorProxT[100], valorProxC;
-	ListaColuna *col1, *col2;
-	ListaTabela *tab1, *tab2;
-	Dado *D;
+	char string[100], condicao[100], valorC, valorT[100], stringAntes[100], stringDepois[100], tipo, valorProxT[100], valorProxC, achou;
+	ListaColuna *col1 = NULL, *col2 = NULL;
+	ListaTabela *tab1, *tab2, *copiaAux;
+	DescFilaI filaA1, filaA2;
+	Dado *D, *auxDado;
 	unqueue(&(*F), string);
 	unqueue(&(*F), string);
 	buscaPonto(string, &verifica);
@@ -207,7 +209,7 @@ void comandoWhere(ListaTabela **L, DescFilaString *F) {
 		buscaListaT(&(*L), stringAntes, &tab1);
 		buscaListaC(&(tab1->listaColuna), stringDepois, &col1);
 	}
-	// Significa que existe uma tabela dentro da lista
+	// Significa que existe uma apenas tabela dentro da lista
 	else
 		buscaListaC(&((*L)->listaColuna), string, &col1);
 	unqueue(&(*F), string);
@@ -216,18 +218,18 @@ void comandoWhere(ListaTabela **L, DescFilaString *F) {
 	unqueue(&(*F), string);
 	buscaPonto(string, &verifica);
 	// e numero ou nome de coluna
-	if(verifica > -1) {
+	if(verifica > -1 || col1->coluna->tipo == 'N') {
 		verifica = -1;
 		// Coluna tipo = 0
 		if((string[0] >= 65 && string[0] <= 90) || (string[0] >= 97 && string[0] <= 122)) {
 			separaPonto(string, stringAntes, stringDepois);
 			buscaListaT(&(*L), stringAntes, &tab2);
-			buscaListaC(&(tab1->listaColuna), stringDepois, &col2);
+			buscaListaC(&(tab2->listaColuna), stringDepois, &col2);
 			tipo = '0';
 		}
 		// Numero tipo = 1
 		else {
-			converteNumeroN(string, &valorN);
+			valorN = atof(string);
 			tipo = '1';
 		}
 	}
@@ -256,7 +258,7 @@ void comandoWhere(ListaTabela **L, DescFilaString *F) {
 		buscaPonto(string, &verifica);
 		if(verifica > -1) {
 			verifica = -1;
-			converteNumeroN(string, &valorN);
+			valorN = atof(string);
 		}
 		if(col1->coluna->tipo == 'C') {
 			unqueue(&(*F), string);
@@ -271,25 +273,108 @@ void comandoWhere(ListaTabela **L, DescFilaString *F) {
 		else
 			converteNumeroI(string, &valorProxI);
 	}
-	D = col1->coluna->pDados;
-	// Falta criar condicoes
-	// E se tiver duas tabelas???
-	// Se for uma chave estrangeira e outra que nao?
-	if(filaVaziaI((*L)->descFilaI))
-		while(D != NULL) {
-			// Tipo inteiro
-			if(tipo == '4') {
-				if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorI >= valorI && D->tipo.valorI <= valorProxI)
-					enqueueI(&(*L)->descFilaI, linha);
-				else if(strcmp(condicao, "=") == 0 && D->tipo.valorI == valorProxI)
-					enqueueI(&(*L)->descFilaI, linha);
-			} else if(tipo == '2') {
-				if(strcmp(condicao, "=") == 0 && D->tipo.valorC == valorC)
-					enqueueI(&(*L)->descFilaI, linha);
-			}
-			linha++;
-			D = D->prox;
+	if(pIteracao) {
+		copiaAux = (*L);
+		while(copiaAux != NULL) {
+			D = copiaAux->tabela->coluna->pDados;
+			for(int j = 0; D != NULL; j++, D = D->prox)
+				enqueueI(&copiaAux->descFilaI, j);
+			copiaAux = copiaAux->prox;
 		}
+	}
+		// Verifica quais sao as tabelas que vao ser usadas e passa pra duas filas auxiliares
+		// Altera condicao para fila auxiliar
+	
+	
+	D = col1->coluna->pDados;
+	while(D != NULL) {
+		
+		// Tipo inteiro
+		if(tipo == '4') {
+			if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorI >= valorI && D->tipo.valorI <= valorProxI)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "=") == 0 && D->tipo.valorI == valorI)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<") == 0 && D->tipo.valorI < valorI)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<=") == 0 && D->tipo.valorI <= valorI)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, ">") == 0 && D->tipo.valorI > valorI)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, ">=") == 0 && D->tipo.valorI >= valorI)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<>") == 0 && D->tipo.valorI != valorI)
+				enqueueI(&(*L)->descFilaI, linha);
+				
+		// Tipo caracter
+		} else if(tipo == '2') {
+			if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorC >= valorC && D->tipo.valorC <= valorProxC)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "=") == 0 && D->tipo.valorC == valorC)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<") == 0 && D->tipo.valorC < valorC)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<=") == 0 && D->tipo.valorC <= valorC)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, ">") == 0 && D->tipo.valorC > valorC)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, ">=") == 0 && D->tipo.valorC >= valorC)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<>") == 0 && D->tipo.valorC != valorC)
+				enqueueI(&(*L)->descFilaI, linha);
+		// Tipo numero
+		} else if(tipo == '1') {
+			if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorN >= valorN && D->tipo.valorN <= valorProxN)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "=") == 0 && D->tipo.valorN == valorN)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<") == 0 && D->tipo.valorN < valorN)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<=") == 0 && D->tipo.valorN <= valorN)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, ">") == 0 && D->tipo.valorN > valorN)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, ">=") == 0 && D->tipo.valorN >= valorN)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<>") == 0 && D->tipo.valorN != valorN)
+				enqueueI(&(*L)->descFilaI, linha);
+				
+		// Tipo coluna
+		} else if(tipo == '0') {
+			auxDado = col2->coluna->pDados;
+			i = 0;
+			while(auxDado != NULL) {
+				if(col1->coluna->tipo == 'I' && auxDado->tipo.valorI == D->tipo.valorI) {
+					if(!existeI(i, tab2->descFilaI))
+						enqueueI(&tab2->descFilaI, i);
+					if(!existeI(linha, tab1->descFilaI))
+						enqueueI(&tab1->descFilaI, linha);
+				}
+				auxDado = auxDado->prox;
+				i++;
+			}
+			
+		// Tipo texto
+		} else if(tipo == '3') {
+			if(strcmp(condicao, "BETWEEN") == 0 && strcmp(D->tipo.valorT, valorT) >= 0 && strcmp(D->tipo.valorT, valorProxT) <= 0)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "=") == 0 && strcmp(D->tipo.valorT, valorT) == 0)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<") == 0 && strcmp(D->tipo.valorT, valorT) < 0)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<=") == 0 && strcmp(D->tipo.valorT, valorT) <= 0)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, ">") == 0 && strcmp(D->tipo.valorT, valorT) > 0)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, ">=") == 0 && strcmp(D->tipo.valorT, valorT) >= 0)
+				enqueueI(&(*L)->descFilaI, linha);
+			else if(strcmp(condicao, "<>") == 0 && strcmp(D->tipo.valorT, valorT) != 0)
+				enqueueI(&(*L)->descFilaI, linha);
+				
+		}
+		linha++;
+		D = D->prox;
+	}
 }
 
 void comandoInsert(BancoDado **B, DescFilaString *I){
