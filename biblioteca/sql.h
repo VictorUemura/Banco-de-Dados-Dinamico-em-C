@@ -200,6 +200,7 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 	ListaTabela *tab1, *tab2 = NULL, *copiaAux;
 	DescFilaI filaA1, filaA2, filaA3;
 	Dado *D, *auxDado;
+
 	unqueue(&(*F), string);
 	unqueue(&(*F), string);
 	buscaPonto(string, &verifica);
@@ -210,8 +211,11 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 		buscaListaC(&(tab1->listaColuna), stringDepois, &col1);
 	}
 	// Significa que existe uma apenas tabela dentro da lista
-	else
-		buscaListaC(&((*L)->listaColuna), string, &col1);
+	else {
+		buscaListaC(&(*L)->listaColuna, string, &col1);
+		tab1 = (*L);
+	}
+	
 	unqueue(&(*F), string);
 	strcpy(condicao, string);
 	
@@ -360,7 +364,20 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 					enqueueI(&tab2->descFilaI, i);
 					if(!existeI(linha, tab1->descFilaI))
 						enqueueI(&tab1->descFilaI, linha);
-				} else {
+				} else if(col1->coluna->tipo == 'C' && auxDado->tipo.valorC == D->tipo.valorC) {
+					enqueueI(&tab2->descFilaI, i);
+					if(!existeI(linha, tab1->descFilaI))
+						enqueueI(&tab1->descFilaI, linha);
+				} else if((col1->coluna->tipo == 'T' || col1->coluna->tipo == 'D') && (strcmp(auxDado->tipo.valorT, D->tipo.valorT) == 0 || strcmp(auxDado->tipo.valorD, D->tipo.valorD) == 0)) {
+					enqueueI(&tab2->descFilaI, i);
+					if(!existeI(linha, tab1->descFilaI))
+						enqueueI(&tab1->descFilaI, linha);
+				} else if(col1->coluna->tipo == 'N' && auxDado->tipo.valorN == D->tipo.valorN) {
+					enqueueI(&tab2->descFilaI, i);
+					if(!existeI(linha, tab1->descFilaI))
+						enqueueI(&tab1->descFilaI, linha);
+				}
+				 else {
 					enqueueI(&filaA3, i);
 				}
 			}
@@ -392,6 +409,18 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 	while(!filaVaziaI(filaA2))
 		unqueueI(&filaA2, &i);
 
+}
+
+void comandoWhereGeral(ListaTabela **L) {
+	ListaTabela *copiaAux;
+	Dado *D;
+	copiaAux = (*L);
+		while(copiaAux != NULL) {
+			D = copiaAux->tabela->coluna->pDados;
+			for(int j = 0; D != NULL; j++, D = D->prox)
+				enqueueI(&copiaAux->descFilaI, j);
+			copiaAux = copiaAux->prox;
+		}
 }
 
 void comandoInsert(BancoDado **B, DescFilaString *I){

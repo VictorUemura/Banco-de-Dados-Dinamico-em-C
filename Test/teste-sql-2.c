@@ -36,20 +36,29 @@ int main(void) {
 		if(strcmp(string, "INSERT") == 0)
 			comandoInsert(&B, &C);
 	}
-	
-	strcpy(string, "* FROM ordem_servico, veiculo, os_peca, peca WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_peca.id_os AND os_peca.id_peca = peca.id_peca;");
+	// O comando e enviado sem o select
+	strcpy(string, "* FROM veiculo WHERE ano BETWEEN 1970 AND 2010;");
 	criaFilaS(string, &L);
 	comandoSelect(&L, &C, &J);
 	comandoFrom(&B, &L, &LT);
 	criaListaColuna(&LT, &C, &J);
-	comandoWhere(&LT, &L, 1);
-	
-	while(!filaVazia(&L)) {
+	topoFilaString(L, string);
+	if(strcmp(";", string) != 0) {
+		comandoWhere(&LT, &L, 1);
+		topoFilaString(L, string);
+		if(strcmp(string, ";") == 0)
+				unqueue(&L, string);
+		
+		while(!filaVazia(&L)) {
+			comandoWhere(&LT, &L, 0);
+			topoFilaString(L, string);
+			if(strcmp(string, ";") == 0)
+				unqueue(&L, string);
+		}
+	} else {
+		comandoWhereGeral(&LT);
 		unqueue(&L, string);
-		comandoWhere(&LT, &L, 0);
-		printf("fefe");
 	}
-	
 	exibeListaTDados(&LT);
 	return 0;
 }
