@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<windows.h>
+#include<string.h>
 
 void telaMenu(){
 	for(int x = 1; x <= 156; x++){
@@ -96,8 +97,9 @@ void telaCheia() {
 	keybd_event(VK_MENU  , 0x38, KEYEVENTF_KEYUP, 0);
 }
 
-void nomeBanco(){
+void nomeBanco(char stringT[]){
 	char string[50], caractere;
+	int i = 0;
 	
 	for(int x = 60; x <= 104; x++){
 		for(int y = 18; y <= 28; y++){
@@ -142,30 +144,51 @@ void nomeBanco(){
 	gotoxy(98, 24);
 	printf("%c", 217);
 	
+	gotoxy(94, 23);
+	printf(".txt");
 	gotoxy(67, 23);
-	for(int i = 0; i < 31 && caractere != 32;){
-		caractere = getche();
-		
-		if(caractere == 8 && i > 0){
-			gotoxy(67+i, 23);
-			printf(" ");
-			string[i] = '\0';
-			i-=1;
-			gotoxy(67+i, 23);
-			printf(" ");
+	caractere = getche();
+	for(i = 1;caractere != 13;){
+		if(caractere == 8){
+			if(i > 0){
+				printf(" ");
+				i--;
+				gotoxy(67+i, 23);
+				
+			}else{
+				gotoxy(67, 23);
+			}
 		}else{
-			string[i] = caractere;
-			i++;
+			if(i < 27){
+				string[i] = caractere;
+				i++;
+			}
+		}
+		if(i < 27)
+			caractere = getche();
+		else{
+			caractere = getch();
+			gotoxy(93, 23);
 		}
 	}
+	
+	string[i] = '.';
+	string[++i] = 't';
+	string[++i] = 'x';
+	string[++i] = 't';
+	string[++i] = '\0';
+	
+	
+	strcpy(stringT, string);
 }
 
 int main(void){
-	int x, y;
+	char stringT[50];
 	telaCheia();
 	telaMenu();
 	telaInfo();
 	telaTexto();
-	nomeBanco();
+	nomeBanco(&stringT);
+	printf("%s", stringT);
 	getch();
 }
