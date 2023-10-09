@@ -360,7 +360,20 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 					enqueueI(&tab2->descFilaI, i);
 					if(!existeI(linha, tab1->descFilaI))
 						enqueueI(&tab1->descFilaI, linha);
-				} else {
+				} else if(col1->coluna->tipo == 'C' && auxDado->tipo.valorC == D->tipo.valorC) {
+					enqueueI(&tab2->descFilaI, i);
+					if(!existeI(linha, tab1->descFilaI))
+						enqueueI(&tab1->descFilaI, linha);
+				} else if((col1->coluna->tipo == 'T' || col1->coluna->tipo == 'D') && (strcmp(auxDado->tipo.valorT, D->tipo.valorT) == 0 || strcmp(auxDado->tipo.valorD, D->tipo.valorD) == 0)) {
+					enqueueI(&tab2->descFilaI, i);
+					if(!existeI(linha, tab1->descFilaI))
+						enqueueI(&tab1->descFilaI, linha);
+				} else if(col1->coluna->tipo == 'N' && auxDado->tipo.valorN == D->tipo.valorN) {
+					enqueueI(&tab2->descFilaI, i);
+					if(!existeI(linha, tab1->descFilaI))
+						enqueueI(&tab1->descFilaI, linha);
+				}
+				 else {
 					enqueueI(&filaA3, i);
 				}
 			}
