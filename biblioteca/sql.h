@@ -197,8 +197,8 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 	double valorN, valorProxN;
 	char string[100], condicao[100], valorC, valorT[100], stringAntes[100], stringDepois[100], tipo, valorProxT[100], valorProxC, achou;
 	ListaColuna *col1 = NULL, *col2 = NULL;
-	ListaTabela *tab1, *tab2, *copiaAux;
-	DescFilaI filaA1, filaA2;
+	ListaTabela *tab1, *tab2 = NULL, *copiaAux;
+	DescFilaI filaA1, filaA2, filaA3;
 	Dado *D, *auxDado;
 	unqueue(&(*F), string);
 	unqueue(&(*F), string);
@@ -282,99 +282,116 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 			copiaAux = copiaAux->prox;
 		}
 	}
-		// Verifica quais sao as tabelas que vao ser usadas e passa pra duas filas auxiliares
-		// Altera condicao para fila auxiliar
 	
+	initI(&filaA1);
 	
-	D = col1->coluna->pDados;
-	while(D != NULL) {
-		
+	while(!filaVaziaI(tab1->descFilaI)) {
+		unqueueI(&tab1->descFilaI, &i);
+		enqueueI(&filaA1, i);
+	}
+	if(tab2 != NULL) {
+		initI(&filaA2);
+		initI(&filaA3);
+		while(!filaVaziaI(tab2->descFilaI)) {
+			unqueueI(&tab2->descFilaI, &i);
+			enqueueI(&filaA2, i);
+		}
+	}
+	
+	while(!filaVaziaI(filaA1)) {
+		unqueueI(&filaA1, &linha);
+		buscaDado(col1->coluna, linha, &D);	
 		// Tipo inteiro
 		if(tipo == '4') {
 			if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorI >= valorI && D->tipo.valorI <= valorProxI)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "=") == 0 && D->tipo.valorI == valorI)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<") == 0 && D->tipo.valorI < valorI)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<=") == 0 && D->tipo.valorI <= valorI)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, ">") == 0 && D->tipo.valorI > valorI)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, ">=") == 0 && D->tipo.valorI >= valorI)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<>") == 0 && D->tipo.valorI != valorI)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 				
 		// Tipo caracter
 		} else if(tipo == '2') {
 			if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorC >= valorC && D->tipo.valorC <= valorProxC)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "=") == 0 && D->tipo.valorC == valorC)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<") == 0 && D->tipo.valorC < valorC)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<=") == 0 && D->tipo.valorC <= valorC)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, ">") == 0 && D->tipo.valorC > valorC)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, ">=") == 0 && D->tipo.valorC >= valorC)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<>") == 0 && D->tipo.valorC != valorC)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 		// Tipo numero
 		} else if(tipo == '1') {
 			if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorN >= valorN && D->tipo.valorN <= valorProxN)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "=") == 0 && D->tipo.valorN == valorN)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<") == 0 && D->tipo.valorN < valorN)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<=") == 0 && D->tipo.valorN <= valorN)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, ">") == 0 && D->tipo.valorN > valorN)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, ">=") == 0 && D->tipo.valorN >= valorN)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<>") == 0 && D->tipo.valorN != valorN)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 				
 		// Tipo coluna
 		} else if(tipo == '0') {
-			auxDado = col2->coluna->pDados;
-			i = 0;
-			while(auxDado != NULL) {
+			while(!filaVaziaI(filaA2)) {
+				unqueueI(&filaA2, &i);
+				buscaDado(col2->coluna, i, &auxDado);
 				if(col1->coluna->tipo == 'I' && auxDado->tipo.valorI == D->tipo.valorI) {
-					if(!existeI(i, tab2->descFilaI))
-						enqueueI(&tab2->descFilaI, i);
+					enqueueI(&tab2->descFilaI, i);
 					if(!existeI(linha, tab1->descFilaI))
 						enqueueI(&tab1->descFilaI, linha);
+				} else {
+					enqueueI(&filaA3, i);
 				}
-				auxDado = auxDado->prox;
-				i++;
+			}
+			while(!filaVaziaI(filaA3)) {
+				unqueueI(&filaA3, &i);
+				enqueueI(&filaA2, i);
 			}
 			
 		// Tipo texto
 		} else if(tipo == '3') {
 			if(strcmp(condicao, "BETWEEN") == 0 && strcmp(D->tipo.valorT, valorT) >= 0 && strcmp(D->tipo.valorT, valorProxT) <= 0)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "=") == 0 && strcmp(D->tipo.valorT, valorT) == 0)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<") == 0 && strcmp(D->tipo.valorT, valorT) < 0)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<=") == 0 && strcmp(D->tipo.valorT, valorT) <= 0)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, ">") == 0 && strcmp(D->tipo.valorT, valorT) > 0)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, ">=") == 0 && strcmp(D->tipo.valorT, valorT) >= 0)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<>") == 0 && strcmp(D->tipo.valorT, valorT) != 0)
-				enqueueI(&(*L)->descFilaI, linha);
+				enqueueI(&tab1->descFilaI, linha);
 				
 		}
-		linha++;
-		D = D->prox;
 	}
+
+	while(!filaVaziaI(filaA2))
+		unqueueI(&filaA2, &i);
+
 }
 
 void comandoInsert(BancoDado **B, DescFilaString *I){
