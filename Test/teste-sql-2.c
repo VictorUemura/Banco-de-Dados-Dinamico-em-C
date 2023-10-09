@@ -37,12 +37,19 @@ int main(void) {
 			comandoInsert(&B, &C);
 	}
 	
-	strcpy(string, "* FROM ordem_servico, os_servico WHERE ordem_servico.id_os = os_servico.id_os;");
+	strcpy(string, "* FROM ordem_servico, veiculo, os_peca, peca WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_peca.id_os AND os_peca.id_peca = peca.id_peca;");
 	criaFilaS(string, &L);
 	comandoSelect(&L, &C, &J);
 	comandoFrom(&B, &L, &LT);
 	criaListaColuna(&LT, &C, &J);
 	comandoWhere(&LT, &L, 1);
+	
+	while(!filaVazia(&L)) {
+		unqueue(&L, string);
+		comandoWhere(&LT, &L, 0);
+		printf("fefe");
+	}
+	
 	exibeListaTDados(&LT);
 	return 0;
 }
