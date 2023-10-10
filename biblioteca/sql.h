@@ -601,7 +601,7 @@ void INSERT_SQL(BancoDado **B, DescFilaString *L) {
 
 void SQL(BancoDado **B, char comando[]) {
 	DescFilaString L;
-	char principal;
+	char principal[100];
 	init(&L);
 	criaFilaS(comando, &L);
 	unqueue(&L, principal);
