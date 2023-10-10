@@ -14,7 +14,7 @@
 int main(void) {
 	BancoDado *B;
 	char string[10000];
-
+	
 	LOAD_SQL(&B, "scripthospital.txt");
 	gets(string);
 	while(strcmp(string, "end") != 0){

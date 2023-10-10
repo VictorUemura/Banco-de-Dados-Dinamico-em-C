@@ -549,6 +549,110 @@ void comandoDelete(ListaTabela **LT, DescFilaString *L) {
 	}
 }
 
+void tabelaListaTDados(ListaTabela **LT, BancoDado *B, int posIx, int posIy) {
+	int larguraCelula = 20;
+    int alturaCelula = 2;
+	int Ax, Ay = posIy;
+	int linha, coluna;
+	int i;
+	ListaTabela *T = (*LT);
+	Dado *D;
+	Fila *F;
+	ListaColuna *C;
+	
+	while(T != NULL) {
+		F = T->descFilaI.inicio;
+		i = 1;
+		while(F != NULL) {
+			i++;
+			F = F->prox;
+		}
+		linha = i;
+		C = T->listaColuna;
+		i = 1;
+		while(C != NULL) {
+			i++;
+			C = C->prox;
+		}
+		coluna = i - 1;
+	    for (int y = 0; y < linha + 1; y++) {
+	    	Ax = posIx;
+	    	gotoxy(Ax, Ay);
+			if(y == 0 && Ax == posIx) {
+				printf("%c", 201);
+				gotoxy(Ax, Ay + 1);
+				printf("%c", 186);
+			}
+				
+			else if(y == linha && Ax == posIx)
+				printf("%c", 200);
+			else if(Ax == posIx) {
+				printf("%c", 204);
+				gotoxy(Ax, Ay + 1);
+				printf("%c", 186);
+			}
+				
+	    	Ax++;
+	    	C = T->listaColuna;
+	    	if(y != 0)
+	    		unqueueI(&T->descFilaI, &i);
+	    	for(int x = 0; x < coluna; x++) {
+	    		if(y == 0) {
+	    			gotoxy(Ax + 1, Ay + 1);
+	    			textcolor(LIGHTBLUE);
+	    			printf("%s", C->coluna->campo);
+	    			textcolor(WHITE);
+	    		}
+				else if(y != linha) {
+		    		gotoxy(Ax + 1, Ay + 1);
+		    		buscaDado(C->coluna, i, &D);
+		    		if(C->coluna->tipo == 'I')
+						printf("%d\n", D->tipo.valorI);
+						else if(C->coluna->tipo == 'T' || C->coluna->tipo == 'D')
+							printf("%s\n", D->tipo.valorT);
+						else if(C->coluna->tipo == 'N')
+							printf("%.2lf\n", D->tipo.valorN);
+						else if(C->coluna->tipo == 'C')
+							printf("%c\n", D->tipo.valorC);
+					}
+				for(int j = 0; j < larguraCelula; j++, Ax++) {
+	    			gotoxy(Ax, Ay);
+	    			printf("%c", 205);
+	    		}
+	    		
+	    		Ax++;
+	    		gotoxy(Ax - 1, Ay);
+	    		if(x == coluna - 1 && y == 0) {
+	    			printf("%c", 187);
+		    		gotoxy(Ax - 1, Ay + 1);
+					printf("%c", 186);
+				} else if(y == 0) {
+					printf("%c", 203);
+					gotoxy(Ax - 1, Ay + 1);
+					printf("%c", 186);	
+				}
+	    		else if(x == coluna - 1 && y == linha)
+	    			printf("%c", 188);
+	    		else if(y == linha)
+	    			printf("%c", 202);
+	    		else if(x == coluna - 1) {
+	    			printf("%c", 185);
+		    		gotoxy(Ax - 1, Ay + 1);
+					printf("%c", 186);
+	    		}
+	    		else {
+	    			printf("%c", 206);
+		    		gotoxy(Ax - 1, Ay + 1);
+					printf("%c", 186);
+				}
+				C = C->prox;
+	    	}
+	    	Ay += alturaCelula;
+		}
+		T = T->prox;
+	}
+}
+
 void DELETE_SQL(BancoDado **B, DescFilaString *L) {
 	ListaTabela *LT;
 	comandoFrom(&(*B), &(*L), &LT);
@@ -591,8 +695,9 @@ void SELECT_SQL(BancoDado **B, DescFilaString *L) {
 		comandoWhereGeral(&LT);
 		unqueue(&(*L), string);
 	}
-	
-	exibeListaTDados(&LT);
+	system("cls");
+	tabelaListaTDados(&LT, *B, 4, 14);
+	//exibeListaTDados(&LT);
 	limpaListaT(&LT);
 }
 
