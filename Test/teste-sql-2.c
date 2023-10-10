@@ -63,7 +63,7 @@ int main(void) {
 	}
 	*/
 	// UPDATE
-	
+	/*
 	strcpy(string, "veiculo SET marca = 'Vw - Volkswagen' WHERE marca = 'Volkswagen';");
 	criaFilaS(string, &L);
 	comandoFrom(&B, &L, &LT);
@@ -71,6 +71,15 @@ int main(void) {
 	criaListaColuna(&LT, NULL, NULL, 1);
 	exibeBanco(B);
 	comandoUpdate(&LT, &L);
+	exibeBanco(B);
+	*/
+	strcpy(string, "FROM veiculo WHERE id_veiculo > 1;");
+	criaFilaS(string, &L);
+	comandoFrom(&B, &L, &LT);
+	// 1 se for delete
+	criaListaColuna(&LT, NULL, NULL, 1);
+	exibeBanco(B);
+	comandoDelete(&LT, &L);
 	exibeBanco(B);
 	
 	return 0;

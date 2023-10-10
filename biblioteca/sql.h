@@ -528,3 +528,18 @@ void comandoUpdate(ListaTabela **LT, DescFilaString *L) {
 			strcpy(D->tipo.valorD, valor);
 		}
 }
+
+void comandoDelete(ListaTabela **LT, DescFilaString *L) {
+	int linha;
+	Fila *F;
+	comandoWhere(&(*LT), &(*L), 1);
+	while(!filaVaziaI((*LT)->descFilaI)) {
+		unqueueI(&(*LT)->descFilaI, &linha);
+		excluiLinha((*LT)->tabela, linha);
+		F = (*LT)->descFilaI.inicio;
+		while(F != NULL) {
+			F->valor -= 1;
+			F = F->prox;
+		}
+	}
+}
