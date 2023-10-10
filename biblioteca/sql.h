@@ -575,6 +575,9 @@ void tabelaListaTDados(ListaTabela **LT, BancoDado *B, int posIx, int posIy) {
 			C = C->prox;
 		}
 		coluna = i - 1;
+		Ax = posIx;
+		gotoxy(Ax, Ay - 1);
+		printf("%s", T->tabela->nome);
 	    for (int y = 0; y < linha + 1; y++) {
 	    	Ax = posIx;
 	    	gotoxy(Ax, Ay);
@@ -601,7 +604,7 @@ void tabelaListaTDados(ListaTabela **LT, BancoDado *B, int posIx, int posIy) {
 	    			gotoxy(Ax + 1, Ay + 1);
 	    			textcolor(LIGHTBLUE);
 	    			printf("%s", C->coluna->campo);
-	    			textcolor(WHITE);
+	    			textcolor(LIGHTGRAY);
 	    		}
 				else if(y != linha) {
 		    		gotoxy(Ax + 1, Ay + 1);
@@ -695,7 +698,7 @@ void SELECT_SQL(BancoDado **B, DescFilaString *L) {
 		comandoWhereGeral(&LT);
 		unqueue(&(*L), string);
 	}
-	tabelaListaTDados(&LT, *B, 4, 14);
+	tabelaListaTDados(&LT, *B, 4, 15);
 	limpaListaT(&LT);
 }
 

@@ -296,6 +296,9 @@ void tabelaBancoDado(BancoDado *B, int posIx, int posIy) {
 		}
 		coluna = i - 1;
 		i = 0;
+		Ax = posIx;
+		gotoxy(Ax, Ay - 1);
+		printf("%s", T->nome);
 	    for (int y = 0; y < linha + 1; y++) {
 	    	Ax = posIx;
 	    	gotoxy(Ax, Ay);
@@ -320,7 +323,7 @@ void tabelaBancoDado(BancoDado *B, int posIx, int posIy) {
 	    			gotoxy(Ax + 1, Ay + 1);
 	    			textcolor(LIGHTBLUE);
 	    			printf("%s", C->campo);
-	    			textcolor(WHITE);
+	    			textcolor(LIGHTGRAY);
 	    		}
 				else if(y != linha) {
 		    		gotoxy(Ax + 1, Ay + 1);
