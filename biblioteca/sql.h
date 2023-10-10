@@ -184,6 +184,14 @@ void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T, char
 			unqueue(&(*C), string);
 			unqueue(&(*T), string2);
 			buscaListaT(&(*L), string2, &caixa);
+			if(strcmp(string, "*") == 0) {
+				col = caixa->tabela->coluna;
+				while(col != NULL) {
+					insereListaC(&(caixa->listaColuna), &col);
+					col = col->prox;
+				}
+				caixa = caixa->prox;
+			}
 			buscaColuna(caixa->tabela, string, &col);
 			insereListaC(&(caixa->listaColuna), &col);
 		}

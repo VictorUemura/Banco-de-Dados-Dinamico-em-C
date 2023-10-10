@@ -13,17 +13,14 @@
 
 int main(void) {
 	BancoDado *B;
-	DescFilaString L;
 	char string[10000];
 
-	init(&L);
-	LOAD_SQL(&B, "scriptdboficina.txt");
+	LOAD_SQL(&B, "scripthospital.txt");
 	gets(string);
 	while(strcmp(string, "end") != 0){
 		SQL(&B, string);
 		gets(string);
 	}
-
 	return 0;
 }
 
