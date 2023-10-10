@@ -36,7 +36,9 @@ int main(void) {
 		if(strcmp(string, "INSERT") == 0)
 			comandoInsert(&B, &C);
 	}
+	// SELECT
 	// O comando e enviado sem o select
+	/*
 	strcpy(string, "ordem_servico.id_os, ordem_servico.data_entrada, ordem_servico.id_veiculo, veiculo.modelo, veiculo.dono, os_servico.id_servico, servico.descricao FROM ordem_servico, veiculo, os_servico, servico WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_servico.id_os AND os_servico.id_servico = servico.id_servico;");
 	criaFilaS(string, &L);
 	comandoSelect(&L, &C, &J);
@@ -59,7 +61,18 @@ int main(void) {
 		comandoWhereGeral(&LT);
 		unqueue(&L, string);
 	}
-	exibeListaTDados(&LT);
+	*/
+	// UPDATE
+	/*
+	strcpy(string, "veiculo SET marca = 'Vw - Volkswagen' WHERE marca = 'Volkswagen';");
+	criaFilaS(string, &L);
+	comandoFrom(&B, &L, &LT);
+	// 1 se for update
+	criaListaColuna(&LT, NULL, NULL, 1);
+	exibeBanco(B);
+	comandoUpdate(&LT, &L);
+	exibeBanco(B);
+	*/
 	return 0;
 }
 

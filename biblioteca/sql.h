@@ -150,16 +150,18 @@ void comandoFrom(BancoDado **B, DescFilaString *F, ListaTabela **L) {
 		topoFilaString(*F, string);
 		if(strcmp(string, ",") == 0)
 			unqueue(&(*F), string);
-	} while(strcmp(string, ";") != 0 && strcmp(string, "WHERE") != 0);
+	} while(strcmp(string, ";") != 0 && strcmp(string, "WHERE") != 0 && strcmp(string, "SET") != 0);
 }
 
-void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T) {
+void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T, char update) {
 	char string[100], string2[100];
 	PColuna *col;
 	ListaTabela *caixa;
-	topoFilaString(*C, string);
-	if(strcmp(string, "*") == 0) {
-		unqueue(&(*C), string);
+	if(C != NULL)
+		topoFilaString(*C, string);
+	if(strcmp(string, "*") == 0 || update == 1) {
+		if(C != NULL)
+			unqueue(&(*C), string);
 		caixa = (*L);
 		while(caixa != NULL) {
 			col = caixa->tabela->coluna;
@@ -305,9 +307,9 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 		else
 			converteNumeroI(string, &valorProxI);
 	}
-	if(pIteracao) {
+	if(pIteracao)
 		comandoWhereGeral(&(*L));
-	}
+		
 	initI(&filaA2);
 	initI(&filaA3);
 	initI(&filaA1);
@@ -493,4 +495,34 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 		unqueue(&VALORES, string);
 		insereDado(&C, string);
 	}
+}
+
+void comandoUpdate(ListaTabela **LT, DescFilaString *L) {
+	char nomeColuna[100], valor[100], string[100];
+	PColuna *C;
+	Dado *D;
+	int linha, valorI;
+	unqueue(&(*L), string);
+	unqueue(&(*L), nomeColuna);
+	unqueue(&(*L), string);
+	unqueue(&(*L), valor);
+	if(strcmp(valor, "'") == 0) {
+		unqueue(&(*L), valor);
+		unqueue(&(*L), string);
+	}
+	comandoWhere(&(*LT), &(*L), 1);
+	unqueueI(&(*LT)->descFilaI, &linha);
+	buscaColuna((*LT)->tabela, nomeColuna, &C);
+	buscaDado(C, linha, &D);
+	if(C->tipo == 'I') {
+		converteNumeroI(valor, &valorI);
+		D->tipo.valorI = valorI;
+	} else if(C->tipo == 'N') {
+		D->tipo.valorN = atof(valor);
+	} else if(C->tipo == 'C')
+		D->tipo.valorC = valor[0];
+	else if(C->tipo == 'T')
+		strcpy(D->tipo.valorT, valor);
+	else if(C->tipo == 'D')
+		strcpy(D->tipo.valorD, valor);
 }
