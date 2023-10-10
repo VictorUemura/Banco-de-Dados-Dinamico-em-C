@@ -13,7 +13,7 @@ typedef struct Dado {
 
 typedef struct PColuna {
 	char tipo, campo[100], pk;
-	Dado *pDados, *pAtual;
+	Dado *pDados;
 	struct PColuna *fk, *prox;
 } PColuna;
 
@@ -66,7 +66,7 @@ void novaColuna(PColuna **C, char *campo, char tipo, char pk) {
 	(*C)->pk = pk;
 	(*C)->tipo = tipo;
 	(*C)->fk = (*C)->prox = NULL;
-	(*C)->pDados = (*C)->pAtual = NULL;
+	(*C)->pDados = NULL;
 	strcpy((*C)->campo, campo);
 }
 
@@ -236,3 +236,25 @@ void exibeBanco(BancoDado *B) {
 		T = T->prox;
 	}
 }
+
+void excluiLinha(Tabela *T, int N) {
+	PColuna *C;
+	int i;
+	C = T->coluna;
+	Dado *D, *A;
+	while(C != NULL) {
+		D = C->pDados;
+		A = D;
+		for(i = 0; i < N; i++) {
+			A = D;
+			D = D->prox;
+		}
+		if(D == C->pDados)
+			C->pDados = D->prox;
+		else
+			A->prox = D->prox;
+		free(D);
+		C = C->prox;
+	}
+}
+

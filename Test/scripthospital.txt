@@ -1,0 +1,33 @@
+CREATE DATABASE db_hospital;
+
+CREATE TABLE Hospital (
+    hospital_id INTEGER,
+    nome CHARACTER(20) NOT NULL,
+    endereco CHARACTER(20) NOT NULL,
+    CONSTRAINT PK_Hospital PRIMARY KEY (hospital_id)
+);
+
+CREATE TABLE Doutor (
+    doutor_id INTEGER,
+    nome CHARACTER(20) NOT NULL,
+    especialidade CHARACTER(20),
+    hospital_id INTEGER,
+    CONSTRAINT PK_Doutor PRIMARY KEY (doutor_id)
+);
+
+CREATE TABLE Paciente (
+    paciente_id INTEGER,
+    nome CHARACTER(20) NOT NULL,
+    idade INTEGER,
+    genero CHARACTER(1),
+    hospital_id INTEGER,
+    CONSTRAINT PK_Paciente PRIMARY KEY (paciente_id)
+);
+
+ALTER TABLE Doutor
+ADD CONSTRAINT FK_Doutor_Hospital
+FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id);
+
+ALTER TABLE Paciente
+ADD CONSTRAINT FK_Paciente_Hospital
+FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id);

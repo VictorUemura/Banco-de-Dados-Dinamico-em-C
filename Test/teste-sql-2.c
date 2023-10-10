@@ -13,53 +13,14 @@
 
 int main(void) {
 	BancoDado *B;
-	ListaTabela *LT;
-	DescFilaString L, C, J;
 	char string[10000];
-	int i = 0;
-	
-	initListaT(&LT);
-	initBancoDado(&B);
-	init(&C);
-	init(&J);
-	init(&L);
-	leituraArquivo(&J, "scriptdboficina.txt");
-	carregaScript(&B, &J);
+
+	LOAD_SQL(&B, "scripthospital.txt");
 	gets(string);
-	while(strcmp(string, "a") != 0){
-		enqueue(&L, string);
+	while(strcmp(string, "end") != 0){
+		SQL(&B, string);
 		gets(string);
 	}
-	criaFila(&L, &C);
-	while(!filaVazia(&C)){
-		topoFilaString(C, string);
-		if(strcmp(string, "INSERT") == 0)
-			comandoInsert(&B, &C);
-	}
-	// O comando e enviado sem o select
-	strcpy(string, "* FROM veiculo WHERE ano BETWEEN 1970 AND 2010;");
-	criaFilaS(string, &L);
-	comandoSelect(&L, &C, &J);
-	comandoFrom(&B, &L, &LT);
-	criaListaColuna(&LT, &C, &J);
-	topoFilaString(L, string);
-	if(strcmp(";", string) != 0) {
-		comandoWhere(&LT, &L, 1);
-		topoFilaString(L, string);
-		if(strcmp(string, ";") == 0)
-				unqueue(&L, string);
-		
-		while(!filaVazia(&L)) {
-			comandoWhere(&LT, &L, 0);
-			topoFilaString(L, string);
-			if(strcmp(string, ";") == 0)
-				unqueue(&L, string);
-		}
-	} else {
-		comandoWhereGeral(&LT);
-		unqueue(&L, string);
-	}
-	exibeListaTDados(&LT);
 	return 0;
 }
 

@@ -1,6 +1,43 @@
-### Exemplos de instrucoes que podem ser usadas para testar o programa ###
+UPDATE peca SET estoque = 0 WHERE id_peca = 8;
 
-### INSERT veiculo ###
+UPDATE peca SET estoque = 2 WHERE id_peca = 9;
+
+UPDATE peca SET estoque = 6 WHERE id_peca = 2;
+
+UPDATE peca SET estoque = 15 WHERE id_peca = 10;
+
+UPDATE peca SET estoque = 3 WHERE id_peca = 4;
+
+
+### SELECT ### 
+SELECT * FROM veiculo;
+
+SELECT id_veiculo, modelo, placa, ano FROM veiculo;
+
+SELECT * FROM veiculo WHERE ano BETWEEN 1970 AND 2010;
+
+SELECT id_veiculo, modelo, placa, ano FROM veiculo WHERE ano BETWEEN 1970 AND 2010;
+
+SELECT * FROM peca;
+
+SELECT id_peca, descricao, valor, estoque FROM peca;
+
+SELECT * FROM servico;
+
+SELECT id_servico, descricao FROM servico;
+
+SELECT * FROM ordem_servico, veiculo, os_peca, peca WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_peca.id_os AND os_peca.id_peca = peca.id_peca;
+
+SELECT ordem_servico.id_os, ordem_servico.data_entrada, ordem_servico.id_veiculo, veiculo.modelo, veiculo.dono, os_peca.id_peca, peca.descricao FROM ordem_servico, veiculo, os_peca, peca WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_peca.id_os AND os_peca.id_peca = peca.id_peca;
+
+SELECT * FROM ordem_servico, veiculo, os_servico, servico WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_servico.id_os AND os_servico.id_servico = servico.id_servico;
+
+SELECT ordem_servico.id_os, ordem_servico.data_entrada, ordem_servico.id_veiculo, veiculo.modelo, veiculo.dono, os_servico.id_servico, servico.descricao FROM ordem_servico, veiculo, os_servico, servico WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_servico.id_os AND os_servico.id_servico = servico.id_servico;
+
+
+### DELETE ###
+DELETE FROM veiculo WHERE id_veiculo = 2;
+
 INSERT INTO veiculo (id_veiculo, marca, modelo, dono, placa, combustivel, ano, chassi) values (1, 'Volkswagen', 'Gol', 'Jose da Silva', 'ABC-1234', 'G', 2010, 'AXB1234T789');
 
 INSERT INTO veiculo (id_veiculo,marca, modelo, dono, placa, combustivel, ano, chassi) values (9, 'Volkswagen', 'Fusca', 'Ana Paula', 'GFG-2233', 'G', 1979, 'AXZ4433R1343');
@@ -62,46 +99,5 @@ INSERT INTO os_peca (id_os, id_peca, quantidade, valor) values (2, 8, 2, 230.00)
 INSERT INTO os_peca (id_os, id_peca, quantidade, valor) values (2, 9, 2, 198.00);
 
 INSERT INTO os_servico (id_os, id_servico, valor) values (2, 3, 340.00);
-
-UPDATE peca SET estoque = 0 WHERE id_peca = 8;
-
-UPDATE peca SET estoque = 2 WHERE id_peca = 9;
-
-UPDATE peca SET estoque = 6 WHERE id_peca = 2;
-
-UPDATE peca SET estoque = 15 WHERE id_peca = 10;
-
-UPDATE peca SET estoque = 3 WHERE id_peca = 4;
-
-
-### SELECT ### 
-SELECT * FROM veiculo;
-
-SELECT id_veiculo, modelo, placa, ano FROM veiculo;
-
-SELECT * FROM veiculo WHERE ano BETWEEN 1970 AND 2010;
-
-SELECT id_veiculo, modelo, placa, ano FROM veiculo WHERE ano BETWEEN 1970 AND 2010;
-
-SELECT * FROM peca;
-
-SELECT id_peca, descricao, valor, estoque FROM peca;
-
-SELECT * FROM servico;
-
-SELECT id_servico, descricao FROM servico;
-
-SELECT * FROM ordem_servico, veiculo, os_peca, peca WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_peca.id_os AND os_peca.id_peca = peca.id_peca;
-
-SELECT ordem_servico.id_os, ordem_servico.data_entrada, ordem_servico.id_veiculo, veiculo.modelo, veiculo.dono, os_peca.id_peca, peca.descricao FROM ordem_servico, veiculo, os_peca, peca WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_peca.id_os AND os_peca.id_peca = peca.id_peca;
-
-SELECT * FROM ordem_servico, veiculo, os_servico, servico WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_servico.id_os AND os_servico.id_servico = servico.id_servico;
-
-SELECT ordem_servico.id_os, ordem_servico.data_entrada, ordem_servico.id_veiculo, veiculo.modelo, veiculo.dono, os_servico.id_servico, servico.descricao FROM ordem_servico, veiculo, os_servico, servico WHERE ordem_servico.id_veiculo = veiculo.id_veiculo AND ordem_servico.id_os = os_servico.id_os AND os_servico.id_servico = servico.id_servico;
-
-
-### DELETE ###
-DELETE FROM veiculo WHERE id_veiculo = 2;
-
 
 

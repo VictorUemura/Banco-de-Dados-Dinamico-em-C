@@ -64,9 +64,12 @@ void insereListaT(ListaTabela **L, Tabela **tabela) {
 
 void limpaListaT(ListaTabela **L) {
 	ListaTabela *A;
+	int x;
 	while(*L != NULL) {
 		A = *L;
 		*L = (*L)->prox;
+		while(!filaVaziaI(A->descFilaI))
+			unqueueI(&A->descFilaI, &x);
 		free(A);
 	}
 }

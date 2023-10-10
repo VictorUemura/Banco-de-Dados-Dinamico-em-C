@@ -150,16 +150,18 @@ void comandoFrom(BancoDado **B, DescFilaString *F, ListaTabela **L) {
 		topoFilaString(*F, string);
 		if(strcmp(string, ",") == 0)
 			unqueue(&(*F), string);
-	} while(strcmp(string, ";") != 0 && strcmp(string, "WHERE") != 0);
+	} while(strcmp(string, ";") != 0 && strcmp(string, "WHERE") != 0 && strcmp(string, "SET") != 0);
 }
 
-void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T) {
+void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T, char update) {
 	char string[100], string2[100];
 	PColuna *col;
 	ListaTabela *caixa;
-	topoFilaString(*C, string);
-	if(strcmp(string, "*") == 0) {
-		unqueue(&(*C), string);
+	if(C != NULL)
+		topoFilaString(*C, string);
+	if(strcmp(string, "*") == 0 || update == 1) {
+		if(C != NULL)
+			unqueue(&(*C), string);
 		caixa = (*L);
 		while(caixa != NULL) {
 			col = caixa->tabela->coluna;
@@ -182,10 +184,30 @@ void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T) {
 			unqueue(&(*C), string);
 			unqueue(&(*T), string2);
 			buscaListaT(&(*L), string2, &caixa);
+			if(strcmp(string, "*") == 0) {
+				col = caixa->tabela->coluna;
+				while(col != NULL) {
+					insereListaC(&(caixa->listaColuna), &col);
+					col = col->prox;
+				}
+				caixa = caixa->prox;
+			}
 			buscaColuna(caixa->tabela, string, &col);
 			insereListaC(&(caixa->listaColuna), &col);
 		}
 	}
+}
+
+void comandoWhereGeral(ListaTabela **L) {
+	ListaTabela *copiaAux;
+	Dado *D;
+	copiaAux = (*L);
+		while(copiaAux != NULL) {
+			D = copiaAux->tabela->coluna->pDados;
+			for(int j = 0; D != NULL; j++, D = D->prox)
+				enqueueI(&copiaAux->descFilaI, j);
+			copiaAux = copiaAux->prox;
+		}
 }
 
 // Funcao que retorna uma fila com linhas em que se encontram aquela condicao aplicada
@@ -193,11 +215,12 @@ void criaListaColuna(ListaTabela **L, DescFilaString *C, DescFilaString *T) {
 // A contagem das linha se inicia por 0
 // Enviar uma fila auxiliar e depois fazer as comparacoes
 void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
-	int linha = 0, valorI, verifica, valorProxI, i;
+	int linha = 0, valorI, verifica, valorProxI, i, fora = 0, foraA = 0;
 	double valorN, valorProxN;
 	char string[100], condicao[100], valorC, valorT[100], stringAntes[100], stringDepois[100], tipo, valorProxT[100], valorProxC, achou;
 	ListaColuna *col1 = NULL, *col2 = NULL;
 	ListaTabela *tab1, *tab2 = NULL, *copiaAux;
+	PColuna *C;
 	DescFilaI filaA1, filaA2, filaA3;
 	Dado *D, *auxDado;
 
@@ -209,10 +232,20 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 		separaPonto(string, stringAntes, stringDepois);
 		buscaListaT(&(*L), stringAntes, &tab1);
 		buscaListaC(&(tab1->listaColuna), stringDepois, &col1);
+		if(col1 == NULL) {
+			buscaColuna(tab1->tabela, stringDepois, &C);
+			novaCaixaListaC(&col1, &C);
+			foraA = 1;
+		}
 	}
 	// Significa que existe uma apenas tabela dentro da lista
 	else {
 		buscaListaC(&(*L)->listaColuna, string, &col1);
+		if(col1 == NULL) {
+			buscaColuna(tab1->tabela, string, &C);
+			novaCaixaListaC(&col1, &C);
+			foraA = 1;
+		}
 		tab1 = (*L);
 	}
 	
@@ -229,6 +262,11 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 			separaPonto(string, stringAntes, stringDepois);
 			buscaListaT(&(*L), stringAntes, &tab2);
 			buscaListaC(&(tab2->listaColuna), stringDepois, &col2);
+			if(col2 == NULL) {
+				buscaColuna(tab2->tabela, stringDepois, &C);
+				novaCaixaListaC(&col2, &C);
+				fora = 1;
+			}
 			tipo = '0';
 		}
 		// Numero tipo = 1
@@ -277,16 +315,11 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 		else
 			converteNumeroI(string, &valorProxI);
 	}
-	if(pIteracao) {
-		copiaAux = (*L);
-		while(copiaAux != NULL) {
-			D = copiaAux->tabela->coluna->pDados;
-			for(int j = 0; D != NULL; j++, D = D->prox)
-				enqueueI(&copiaAux->descFilaI, j);
-			copiaAux = copiaAux->prox;
-		}
-	}
-	
+	if(pIteracao)
+		comandoWhereGeral(&(*L));
+		
+	initI(&filaA2);
+	initI(&filaA3);
 	initI(&filaA1);
 	
 	while(!filaVaziaI(tab1->descFilaI)) {
@@ -294,19 +327,16 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 		enqueueI(&filaA1, i);
 	}
 	if(tab2 != NULL) {
-		initI(&filaA2);
-		initI(&filaA3);
 		while(!filaVaziaI(tab2->descFilaI)) {
 			unqueueI(&tab2->descFilaI, &i);
 			enqueueI(&filaA2, i);
 		}
 	}
-	
 	while(!filaVaziaI(filaA1)) {
 		unqueueI(&filaA1, &linha);
 		buscaDado(col1->coluna, linha, &D);	
 		// Tipo inteiro
-		if(tipo == '4') {
+		if(tipo == '4') {								
 			if(strcmp(condicao, "BETWEEN") == 0 && D->tipo.valorI >= valorI && D->tipo.valorI <= valorProxI)
 				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "=") == 0 && D->tipo.valorI == valorI)
@@ -402,25 +432,15 @@ void comandoWhere(ListaTabela **L, DescFilaString *F, char pIteracao) {
 				enqueueI(&tab1->descFilaI, linha);
 			else if(strcmp(condicao, "<>") == 0 && strcmp(D->tipo.valorT, valorT) != 0)
 				enqueueI(&tab1->descFilaI, linha);
-				
+
 		}
 	}
-
 	while(!filaVaziaI(filaA2))
 		unqueueI(&filaA2, &i);
-
-}
-
-void comandoWhereGeral(ListaTabela **L) {
-	ListaTabela *copiaAux;
-	Dado *D;
-	copiaAux = (*L);
-		while(copiaAux != NULL) {
-			D = copiaAux->tabela->coluna->pDados;
-			for(int j = 0; D != NULL; j++, D = D->prox)
-				enqueueI(&copiaAux->descFilaI, j);
-			copiaAux = copiaAux->prox;
-		}
+	if(fora)
+		free(col2);
+	if(foraA)
+		free(col1);
 }
 
 void comandoInsert(BancoDado **B, DescFilaString *I){
@@ -435,25 +455,22 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 	
 	unqueue(&(*I), string);
 	while(!filaVazia(I) && strcmp(string, ";") != 0){
-		if(strcmp(string,"INSERT")==0){
+		if(strcmp(string, "INTO")==0){
 			unqueue(&(*I), string);
-			if(strcmp(string, "INTO")==0){
-				unqueue(&(*I), string);
-				strcpy(stringTabela, string);
-				unqueue(&(*I), string);
-				do{
-					if(strcmp(string, "(") == 0)
-						unqueue(&(*I), string);
-					else if(strcmp(string, ")") == 0)
-						unqueue(&(*I), string);
-					else if(strcmp(string, ",") == 0)
-						unqueue(&(*I), string);
-					else{
-						enqueue(&COLUNA, string);
-						unqueue(&(*I), string);
-					}
-				}while(stricmp(string, "VALUES") != 0 && !filaVazia(I));
-			}
+			strcpy(stringTabela, string);
+			unqueue(&(*I), string);
+			do{
+				if(strcmp(string, "(") == 0)
+					unqueue(&(*I), string);
+				else if(strcmp(string, ")") == 0)
+					unqueue(&(*I), string);
+				else if(strcmp(string, ",") == 0)
+					unqueue(&(*I), string);
+				else{
+					enqueue(&COLUNA, string);
+					unqueue(&(*I), string);
+				}
+			}while(stricmp(string, "VALUES") != 0 && !filaVazia(I));
 		}
 		else if(stricmp(string, "VALUES") == 0){
 			unqueue(&(*I), string);
@@ -483,4 +500,125 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 		unqueue(&VALORES, string);
 		insereDado(&C, string);
 	}
+}
+
+void comandoUpdate(ListaTabela **LT, DescFilaString *L) {
+	char nomeColuna[100], valor[100], string[100];
+	PColuna *C;
+	Dado *D;
+	int linha, valorI;
+	unqueue(&(*L), string);
+	unqueue(&(*L), nomeColuna);
+	unqueue(&(*L), string);
+	unqueue(&(*L), valor);
+	if(strcmp(valor, "'") == 0) {
+		unqueue(&(*L), valor);
+		unqueue(&(*L), string);
+	}
+	comandoWhere(&(*LT), &(*L), 1);
+	while(!filaVaziaI((*LT)->descFilaI)) {
+		unqueueI(&(*LT)->descFilaI, &linha);
+		buscaColuna((*LT)->tabela, nomeColuna, &C);
+		buscaDado(C, linha, &D);
+		if(C->tipo == 'I') {
+			converteNumeroI(valor, &valorI);
+			D->tipo.valorI = valorI;
+		} else if(C->tipo == 'N') {
+			D->tipo.valorN = atof(valor);
+		} else if(C->tipo == 'C')
+			D->tipo.valorC = valor[0];
+		else if(C->tipo == 'T')
+			strcpy(D->tipo.valorT, valor);
+		else if(C->tipo == 'D')
+			strcpy(D->tipo.valorD, valor);
+		}
+}
+
+void comandoDelete(ListaTabela **LT, DescFilaString *L) {
+	int linha;
+	Fila *F;
+	comandoWhere(&(*LT), &(*L), 1);
+	while(!filaVaziaI((*LT)->descFilaI)) {
+		unqueueI(&(*LT)->descFilaI, &linha);
+		excluiLinha((*LT)->tabela, linha);
+		F = (*LT)->descFilaI.inicio;
+		while(F != NULL) {
+			F->valor -= 1;
+			F = F->prox;
+		}
+	}
+}
+
+void DELETE_SQL(BancoDado **B, DescFilaString *L) {
+	ListaTabela *LT;
+	comandoFrom(&(*B), &(*L), &LT);
+	// 1 se for delete ou update
+	criaListaColuna(&LT, NULL, NULL, 1);
+	comandoDelete(&LT, &(*L));
+	limpaListaT(&LT);
+}
+
+void UPDATE_SQL(BancoDado **B, DescFilaString *L) {
+	ListaTabela *LT;
+	comandoFrom(&(*B), &(*L), &LT);
+	// 1 se for update ou delete
+	criaListaColuna(&LT, NULL, NULL, 1);
+	comandoUpdate(&LT, &(*L));
+	limpaListaT(&LT);
+}
+
+void SELECT_SQL(BancoDado **B, DescFilaString *L) {
+	DescFilaString C, J;
+	char string[100];
+	ListaTabela *LT;
+	comandoSelect(&(*L), &C, &J);
+	comandoFrom(&(*B), &(*L), &LT);
+	criaListaColuna(&LT, &C, &J, 0);
+	topoFilaString(*L, string);
+	if(strcmp(";", string) != 0) {
+		comandoWhere(&LT, &(*L), 1);
+		topoFilaString(*L, string);
+		if(strcmp(string, ";") == 0)
+				unqueue(&(*L), string);
+
+		while(!filaVazia(&(*L))) {
+			comandoWhere(&LT, &(*L), 0);
+			topoFilaString(*L, string);
+			if(strcmp(string, ";") == 0)
+				unqueue(&(*L), string);
+		}
+	} else {
+		comandoWhereGeral(&LT);
+		unqueue(&(*L), string);
+	}
+	
+	exibeListaTDados(&LT);
+	limpaListaT(&LT);
+}
+
+void LOAD_SQL(BancoDado **B, char nomeArq[]) {
+	DescFilaString J;
+	init(&J);
+	leituraArquivo(&J, nomeArq);
+	carregaScript(&(*B), &J);
+}
+
+void INSERT_SQL(BancoDado **B, DescFilaString *L) {
+	comandoInsert(&(*B), &(*L));
+}
+
+void SQL(BancoDado **B, char comando[]) {
+	DescFilaString L;
+	char principal[100];
+	init(&L);
+	criaFilaS(comando, &L);
+	unqueue(&L, principal);
+	if(stricmp("INSERT", principal) == 0)
+		INSERT_SQL(&(*B), &L);
+	if(stricmp("SELECT", principal) == 0)
+		SELECT_SQL(&(*B), &L);
+	if(stricmp("UPDATE", principal) == 0)
+		UPDATE_SQL(&(*B), &L);
+	if(stricmp("DELETE", principal) == 0)
+		DELETE_SQL(&(*B), &L);
 }
