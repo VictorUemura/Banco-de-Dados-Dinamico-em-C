@@ -447,25 +447,22 @@ void comandoInsert(BancoDado **B, DescFilaString *I){
 	
 	unqueue(&(*I), string);
 	while(!filaVazia(I) && strcmp(string, ";") != 0){
-		if(strcmp(string,"INSERT")==0){
+		if(strcmp(string, "INTO")==0){
 			unqueue(&(*I), string);
-			if(strcmp(string, "INTO")==0){
-				unqueue(&(*I), string);
-				strcpy(stringTabela, string);
-				unqueue(&(*I), string);
-				do{
-					if(strcmp(string, "(") == 0)
-						unqueue(&(*I), string);
-					else if(strcmp(string, ")") == 0)
-						unqueue(&(*I), string);
-					else if(strcmp(string, ",") == 0)
-						unqueue(&(*I), string);
-					else{
-						enqueue(&COLUNA, string);
-						unqueue(&(*I), string);
-					}
-				}while(stricmp(string, "VALUES") != 0 && !filaVazia(I));
-			}
+			strcpy(stringTabela, string);
+			unqueue(&(*I), string);
+			do{
+				if(strcmp(string, "(") == 0)
+					unqueue(&(*I), string);
+				else if(strcmp(string, ")") == 0)
+					unqueue(&(*I), string);
+				else if(strcmp(string, ",") == 0)
+					unqueue(&(*I), string);
+				else{
+					enqueue(&COLUNA, string);
+					unqueue(&(*I), string);
+				}
+			}while(stricmp(string, "VALUES") != 0 && !filaVazia(I));
 		}
 		else if(stricmp(string, "VALUES") == 0){
 			unqueue(&(*I), string);
@@ -542,4 +539,62 @@ void comandoDelete(ListaTabela **LT, DescFilaString *L) {
 			F = F->prox;
 		}
 	}
+}
+
+void DELETE_SQL(BancoDado **B, DescFilaString *L) {
+	ListaTabela *LT;
+	comandoFrom(&(*B), &(*L), &LT);
+	// 1 se for delete ou update
+	criaListaColuna(&LT, NULL, NULL, 1);
+	comandoDelete(&LT, &(*L));
+	limpaListaT(&LT);
+}
+
+void UPDATE_SQL(BancoDado **B, DescFilaString *L) {
+	ListaTabela *LT;
+	comandoFrom(&(*B), &(*L), &LT);
+	// 1 se for update ou delete
+	criaListaColuna(&LT, NULL, NULL, 1);
+	comandoUpdate(&LT, &(*L));
+	limpaListaT(&LT);
+}
+
+void SELECT_SQL(BancoDado **B, DescFilaString *L) {
+	DescFilaString C, J;
+	char string[100];
+	ListaTabela *LT;
+	comandoSelect(&(*L), &C, &J);
+	comandoFrom(&(*B), &(*L), &LT);
+	criaListaColuna(&LT, &C, &J, 0);
+	topoFilaString(*L, string);
+	if(strcmp(";", string) != 0) {
+		comandoWhere(&LT, &(*L), 1);
+		topoFilaString(*L, string);
+		if(strcmp(string, ";") == 0)
+				unqueue(&(*L), string);
+
+		while(!filaVazia(&(*L))) {
+			comandoWhere(&LT, &(*L), 0);
+			topoFilaString(*L, string);
+			if(strcmp(string, ";") == 0)
+				unqueue(&(*L), string);
+		}
+	} else {
+		comandoWhereGeral(&LT);
+		unqueue(&(*L), string);
+	}
+	
+	exibeListaTDados(&LT);
+	limpaListaT(&LT);
+}
+
+void LOAD_SQL(BancoDado **B, char nomeArq[]) {
+	DescFilaString J;
+	init(&J);
+	leituraArquivo(&J, nomeArq);
+	carregaScript(&(*B), &J);
+}
+
+void INSERT_SQL(BancoDado **B, DescFilaString *L) {
+	comandoInsert(&(*B), &(*L));
 }
