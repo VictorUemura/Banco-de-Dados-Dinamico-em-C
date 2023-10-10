@@ -239,16 +239,8 @@ void carregaComando(BancoDado **B){
 	gets(string);
 	i++;
 	while(stricmp(string, "") != 0){
-		enqueue(&L, string);
-		if(!filaVazia(&L)){
-			criaFila(&C, &L);
-			while(!filaVazia(&C)){
-				topoFilaString(C, string);
-				if(strcmp(string, "INSERT") == 0)
-					comandoInsert(&(*B), &C);
-			}
-		}
-		gotoxy(5, 13+i);;
+		SQL(&(*B), string);
+		gotoxy(5, 13+i);
 		gets(string);
 		i++;
 	}
@@ -273,40 +265,106 @@ void carregaComando(BancoDado **B){
 	}
 }
 
-void exibirBanco(BancoDado *B){
-	
-	PColuna *C;
+void tabelaBancoDado(BancoDado *B, int posIx, int posIy) {
+	int larguraCelula = 20;
+    int alturaCelula = 2;
+	int Ax, Ay = posIy;
+	int linha, coluna;
+	int i;
 	Tabela *T = B->tabela;
 	Dado *D;
-	int i=0;
+	PColuna *C;
+	
 	while(T != NULL) {
-		gotoxy(5, 14+i);
-		printf("NOME TABELA: %s\n", T->nome);
+		D = T->coluna->pDados;
+		i = 1;
+		while(D != NULL) {
+			i++;
+			D = D->prox;
+		}
+		linha = i;
 		C = T->coluna;
+		i = 1;
 		while(C != NULL) {
 			i++;
-			printf("	COLUNA: %s - TIPO: %c - PK: %c - FK: ", C->campo, C->tipo, C->pk);
-			if(C->fk != NULL)
-				printf("%s\n", C->fk->campo);
-			else
-				printf("NULL\n");
-			D = C->pDados;
-			while(D != NULL) {
-				i++;
-				if(C->tipo == 'I')
-				printf("	%d - %d\n", ++i, D->tipo.valorI);
-				else if(C->tipo == 'T' || C->tipo == 'D')
-				printf("	%d - %s\n", ++i, D->tipo.valorT);
-				else if(C->tipo == 'N')
-				printf("	%d - %.2lf\n", ++i, D->tipo.valorN);
-				else if(C->tipo == 'C')
-				printf("	%d - %c\n", ++i, D->tipo.valorC);
-				D = D->prox;
-			}
 			C = C->prox;
 		}
-		i++;
-		i++;
+		coluna = i - 1;
+		i = 0;
+	    for (int y = 0; y < linha + 1; y++) {
+	    	Ax = posIx;
+	    	gotoxy(Ax, Ay);
+			if(y == 0 && Ax == posIx) {
+				printf("%c", 201);
+				gotoxy(Ax, Ay + 1);
+				printf("%c", 186);
+			}
+				
+			else if(y == linha && Ax == posIx)
+				printf("%c", 200);
+			else if(Ax == posIx) {
+				printf("%c", 204);
+				gotoxy(Ax, Ay + 1);
+				printf("%c", 186);
+			}
+				
+	    	Ax++;
+	    	C = T->coluna;
+	    	for(int x = 0; x < coluna; x++) {
+	    		if(y == 0) {
+	    			gotoxy(Ax + 1, Ay + 1);
+	    			textcolor(LIGHTBLUE);
+	    			printf("%s", C->campo);
+	    			textcolor(WHITE);
+	    		}
+				else if(y != linha) {
+		    		gotoxy(Ax + 1, Ay + 1);
+		    		buscaDado(C, i, &D);
+		    		if(C->tipo == 'I')
+						printf("%d\n", D->tipo.valorI);
+						else if(C->tipo == 'T' || C->tipo == 'D')
+							printf("%s\n", D->tipo.valorT);
+						else if(C->tipo == 'N')
+							printf("%.2lf\n", D->tipo.valorN);
+						else if(C->tipo == 'C')
+							printf("%c\n", D->tipo.valorC);
+					}
+				for(int j = 0; j < larguraCelula; j++, Ax++) {
+	    			gotoxy(Ax, Ay);
+	    			printf("%c", 205);
+	    		}
+	    		
+	    		Ax++;
+	    		gotoxy(Ax - 1, Ay);
+	    		if(x == coluna - 1 && y == 0) {
+	    			printf("%c", 187);
+		    		gotoxy(Ax - 1, Ay + 1);
+					printf("%c", 186);
+				} else if(y == 0) {
+					printf("%c", 203);
+					gotoxy(Ax - 1, Ay + 1);
+					printf("%c", 186);	
+				}
+	    		else if(x == coluna - 1 && y == linha)
+	    			printf("%c", 188);
+	    		else if(y == linha)
+	    			printf("%c", 202);
+	    		else if(x == coluna - 1) {
+	    			printf("%c", 185);
+		    		gotoxy(Ax - 1, Ay + 1);
+					printf("%c", 186);
+	    		}
+	    		else {
+	    			printf("%c", 206);
+		    		gotoxy(Ax - 1, Ay + 1);
+					printf("%c", 186);
+				}
+				C = C->prox;
+	    	}
+	    	if(y != 0)
+	    		i++;
+	    	Ay += alturaCelula;
+		}
 		T = T->prox;
 	}
 }
@@ -327,8 +385,7 @@ int main(void){
 	while(op != 62){
 		if(op == 59 && flag == 0){
 			nomeBanco(stringT);
-			leituraArquivo(&F, stringT);
-			carregaScript(&B, &F);
+			LOAD_SQL(&B, stringT);
 			limpaTela(); 	
 			mensagemB();
 			flag = 1;
@@ -337,7 +394,10 @@ int main(void){
 			carregaComando(&B);
 		}
 		else if(op == 61){
-			exibirBanco(B);
+			tabelaBancoDado(B, 4, 14);
+			getch();
+			system("cls");
+			telaInfo();
 		}
 		
 		op = getche();
