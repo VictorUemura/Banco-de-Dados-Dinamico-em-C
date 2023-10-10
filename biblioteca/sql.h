@@ -598,3 +598,19 @@ void LOAD_SQL(BancoDado **B, char nomeArq[]) {
 void INSERT_SQL(BancoDado **B, DescFilaString *L) {
 	comandoInsert(&(*B), &(*L));
 }
+
+void SQL(BancoDado **B, char comando[]) {
+	DescFilaString L;
+	char principal;
+	init(&L);
+	criaFilaS(comando, &L);
+	unqueue(&L, principal);
+	if(stricmp("INSERT", principal) == 0)
+		INSERT_SQL(&(*B), &L);
+	if(stricmp("SELECT", principal) == 0)
+		SELECT_SQL(&(*B), &L);
+	if(stricmp("UPDATE", principal) == 0)
+		UPDATE_SQL(&(*B), &L);
+	if(stricmp("DELETE", principal) == 0)
+		DELETE_SQL(&(*B), &L);
+}
