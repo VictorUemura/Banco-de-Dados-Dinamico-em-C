@@ -10,7 +10,6 @@ INSERT INTO Hospital (hospital_id, nome, endereco) VALUES (7, 'Hospital G', 'Pra
 INSERT INTO Hospital (hospital_id, nome, endereco) VALUES (8, 'Hospital H', 'Avenida 8');
 INSERT INTO Hospital (hospital_id, nome, endereco) VALUES (9, 'Hospital I', 'Rua 9');
 INSERT INTO Hospital (hospital_id, nome, endereco) VALUES (10, 'Hospital J', 'Alameda 10');
-
 INSERT INTO Doutor (doutor_id, nome, especialidade, hospital_id) VALUES (1, 'Dr. Smith', 'Cardiologia', 1);
 INSERT INTO Doutor (doutor_id, nome, especialidade, hospital_id) VALUES (2, 'Dr. Johnson', 'Pediatria', 2);
 INSERT INTO Doutor (doutor_id, nome, especialidade, hospital_id) VALUES (3, 'Dr. Williams', 'Ortopedia', 3);
@@ -41,7 +40,6 @@ INSERT INTO Doutor (doutor_id, nome, especialidade, hospital_id) VALUES (27, 'Dr
 INSERT INTO Doutor (doutor_id, nome, especialidade, hospital_id) VALUES (28, 'Dr. Young', 'Urologia', 8);
 INSERT INTO Doutor (doutor_id, nome, especialidade, hospital_id) VALUES (29, 'Dr. Hernandez', 'Oncologia', 9);
 INSERT INTO Doutor (doutor_id, nome, especialidade, hospital_id) VALUES (30, 'Dr. King', 'Pneumologia', 10);
-
 INSERT INTO Paciente (paciente_id, nome, idade, genero, hospital_id) VALUES (1, 'João Silva', 30, 'M', 1);
 INSERT INTO Paciente (paciente_id, nome, idade, genero, hospital_id) VALUES (2, 'Maria Oliveira', 25, 'F', 2);
 INSERT INTO Paciente (paciente_id, nome, idade, genero, hospital_id) VALUES (3, 'José Santos', 40, 'M', 3);

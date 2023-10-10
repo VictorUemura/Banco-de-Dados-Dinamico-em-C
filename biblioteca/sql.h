@@ -695,9 +695,7 @@ void SELECT_SQL(BancoDado **B, DescFilaString *L) {
 		comandoWhereGeral(&LT);
 		unqueue(&(*L), string);
 	}
-	system("cls");
 	tabelaListaTDados(&LT, *B, 4, 14);
-	//exibeListaTDados(&LT);
 	limpaListaT(&LT);
 }
 
