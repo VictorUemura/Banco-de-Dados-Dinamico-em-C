@@ -511,18 +511,20 @@ void comandoUpdate(ListaTabela **LT, DescFilaString *L) {
 		unqueue(&(*L), string);
 	}
 	comandoWhere(&(*LT), &(*L), 1);
-	unqueueI(&(*LT)->descFilaI, &linha);
-	buscaColuna((*LT)->tabela, nomeColuna, &C);
-	buscaDado(C, linha, &D);
-	if(C->tipo == 'I') {
-		converteNumeroI(valor, &valorI);
-		D->tipo.valorI = valorI;
-	} else if(C->tipo == 'N') {
-		D->tipo.valorN = atof(valor);
-	} else if(C->tipo == 'C')
-		D->tipo.valorC = valor[0];
-	else if(C->tipo == 'T')
-		strcpy(D->tipo.valorT, valor);
-	else if(C->tipo == 'D')
-		strcpy(D->tipo.valorD, valor);
+	while(!filaVaziaI((*LT)->descFilaI)) {
+		unqueueI(&(*LT)->descFilaI, &linha);
+		buscaColuna((*LT)->tabela, nomeColuna, &C);
+		buscaDado(C, linha, &D);
+		if(C->tipo == 'I') {
+			converteNumeroI(valor, &valorI);
+			D->tipo.valorI = valorI;
+		} else if(C->tipo == 'N') {
+			D->tipo.valorN = atof(valor);
+		} else if(C->tipo == 'C')
+			D->tipo.valorC = valor[0];
+		else if(C->tipo == 'T')
+			strcpy(D->tipo.valorT, valor);
+		else if(C->tipo == 'D')
+			strcpy(D->tipo.valorD, valor);
+		}
 }

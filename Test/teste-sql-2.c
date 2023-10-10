@@ -63,7 +63,7 @@ int main(void) {
 	}
 	*/
 	// UPDATE
-	/*
+	
 	strcpy(string, "veiculo SET marca = 'Vw - Volkswagen' WHERE marca = 'Volkswagen';");
 	criaFilaS(string, &L);
 	comandoFrom(&B, &L, &LT);
@@ -72,7 +72,7 @@ int main(void) {
 	exibeBanco(B);
 	comandoUpdate(&LT, &L);
 	exibeBanco(B);
-	*/
+	
 	return 0;
 }
 
