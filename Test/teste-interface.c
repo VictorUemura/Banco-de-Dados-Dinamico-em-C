@@ -1,6 +1,31 @@
 #include<stdio.h>
 #include<windows.h>
+#include<conio2.h>
 #include<string.h>
+#include "../biblioteca/tadFilaS.h"
+#include "../biblioteca/tadFilaI.h"
+#include "../biblioteca/utils.h"
+#include "../biblioteca/tadBanco.h"
+#include "../biblioteca/tadListaColuna.h"
+#include "../biblioteca/tadListaTabela.h"
+#include "../biblioteca/sql.h"
+
+void hidecursor()
+{
+   HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+   CONSOLE_CURSOR_INFO info;
+   info.dwSize = 10;
+   info.bVisible = FALSE;
+   SetConsoleCursorInfo(consoleHandle, &info);
+}
+void showcursor()
+{
+   HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+   CONSOLE_CURSOR_INFO info;
+   info.dwSize = 10;
+   info.bVisible = TRUE;
+   SetConsoleCursorInfo(consoleHandle, &info);
+}
 
 void telaMenu(){
 	for(int x = 1; x <= 156; x++){
@@ -63,9 +88,9 @@ void telaInfo(){
 	gotoxy(26,3);
 	printf("F2:CARREGAR COMANDOS");
 	gotoxy(49,3);
-	printf("F3:VOLTAR");
-	gotoxy(61,3);
-	printf("F4:EXIBIR TABELAS");
+	printf("F3:EXIBIR TABELAS");
+	gotoxy(69,3);
+	printf("F4:SAIR");
 }
 
 void telaTexto(){
@@ -147,48 +172,175 @@ void nomeBanco(char stringT[]){
 	gotoxy(94, 23);
 	printf(".txt");
 	gotoxy(67, 23);
-	caractere = getche();
-	for(i = 1;caractere != 13;){
-		if(caractere == 8){
-			if(i > 0){
-				printf(" ");
-				i--;
-				gotoxy(67+i, 23);
-				
-			}else{
-				gotoxy(67, 23);
-			}
-		}else{
-			if(i < 27){
-				string[i] = caractere;
-				i++;
-			}
-		}
-		if(i < 27)
-			caractere = getche();
-		else{
-			caractere = getch();
-			gotoxy(93, 23);
-		}
-	}
-	
+	showcursor();
+	gets(string);
+	i = strlen(string);
 	string[i] = '.';
 	string[++i] = 't';
 	string[++i] = 'x';
 	string[++i] = 't';
 	string[++i] = '\0';
+		
 	
+	hidecursor();
+	strcpy(stringT, string);	
 	
-	strcpy(stringT, string);
+}
+
+void limpaTela(){
+	for(int x = 1; x <= 153; x++){
+		for(int y = 11 ; y <= 44; y++){
+			gotoxy(x, y);
+			if(x > 1 || x < 153){
+				printf(" ");
+			}
+			else if(x > 1 && x < 153 && y > 11 || y < 44){
+				printf(" ");
+			}
+		}
+	}
+}
+
+void mensagemB(){
+	char string[50];
+	strcpy(string, "CRIANDO BANCO DE DADOS...");
+
+	for(int i = 0; i < strlen(string); i++){
+		gotoxy(5+i,6);
+		Sleep(8);
+		printf("%c", string[i]);
+	}
+	Sleep(500);
+	strcpy(string, "BANCO DE DADOS CRIADO COM SUCESSO...");
+	for(int i = 0; i < strlen(string); i++){
+		gotoxy(5+i,6);
+		Sleep(8);
+		printf("%c", string[i]);
+	}
+	Sleep(500);
+	for(int i = 0; i < strlen(string); i++){
+		gotoxy(5+i,6);
+		Sleep(8);
+		printf(" ");
+	}
+}
+
+void carregaComando(BancoDado **B){
+	char caractere = 10;
+	int i = 0, flag = 0;
+	DescFilaString C, L;
+	char string[500];
+	init(&C);
+	init(&L);
+	showcursor();
+	gotoxy(4, 11);
+	printf("LINHA DE COMANDO: ");
+	gotoxy(5, 13);
+	gets(string);
+	i++;
+	while(stricmp(string, "") != 0){
+		enqueue(&L, string);
+		if(!filaVazia(&L)){
+			criaFila(&C, &L);
+			while(!filaVazia(&C)){
+				topoFilaString(C, string);
+				if(strcmp(string, "INSERT") == 0)
+					comandoInsert(&(*B), &C);
+			}
+		}
+		gotoxy(5, 13+i);;
+		gets(string);
+		i++;
+	}
+	hidecursor();
+	for(int y = 0; y <= i ;y++){
+		for(int x = 0; x < 400; x++){
+			gotoxy(2+x,10+y);
+			printf(" ");
+		}
+	}
+	strcpy(string, "OPERACAO CONCLUIDA..");
+	for(int i = 0; i < strlen(string); i++){
+		gotoxy(5+i, 6);
+		Sleep(8);
+		printf("%c", string[i]);
+	}
+	Sleep(300);
+	for(int i = 0; i < strlen(string); i++){
+		gotoxy(5+i, 6);
+		Sleep(8);
+		printf(" ");
+	}
+}
+
+void exibirBanco(BancoDado *B){
+	
+	PColuna *C;
+	Tabela *T = B->tabela;
+	Dado *D;
+	int i=0;
+	while(T != NULL) {
+		gotoxy(5, 14+i);
+		printf("NOME TABELA: %s\n", T->nome);
+		C = T->coluna;
+		while(C != NULL) {
+			i++;
+			printf("	COLUNA: %s - TIPO: %c - PK: %c - FK: ", C->campo, C->tipo, C->pk);
+			if(C->fk != NULL)
+				printf("%s\n", C->fk->campo);
+			else
+				printf("NULL\n");
+			D = C->pDados;
+			while(D != NULL) {
+				i++;
+				if(C->tipo == 'I')
+				printf("	%d - %d\n", ++i, D->tipo.valorI);
+				else if(C->tipo == 'T' || C->tipo == 'D')
+				printf("	%d - %s\n", ++i, D->tipo.valorT);
+				else if(C->tipo == 'N')
+				printf("	%d - %.2lf\n", ++i, D->tipo.valorN);
+				else if(C->tipo == 'C')
+				printf("	%d - %c\n", ++i, D->tipo.valorC);
+				D = D->prox;
+			}
+			C = C->prox;
+		}
+		i++;
+		i++;
+		T = T->prox;
+	}
 }
 
 int main(void){
-	char stringT[50];
+	int flag = 0;
+	BancoDado *B;
+	DescFilaString F;
+	char stringT[50], op;
+	initBancoDado(&B);
+	init(&F);
+	hidecursor();
 	telaCheia();
-	telaMenu();
+	Sleep(500);
 	telaInfo();
-	telaTexto();
-	nomeBanco(&stringT);
-	printf("%s", stringT);
-	getch();
+	op = getche();
+	op = getche();
+	while(op != 62){
+		if(op == 59 && flag == 0){
+			nomeBanco(stringT);
+			leituraArquivo(&F, stringT);
+			carregaScript(&B, &F);
+			limpaTela(); 	
+			mensagemB();
+			flag = 1;
+		}
+		else if(op == 60){
+			carregaComando(&B);
+		}
+		else if(op == 61){
+			exibirBanco(B);
+		}
+		
+		op = getche();
+	}
+	
 }
